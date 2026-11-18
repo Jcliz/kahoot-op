@@ -1,0 +1,83 @@
+{
+  "title": "Programa Periódico de Qualidade",
+  "questions": [
+    {
+      "position": 1,
+      "text": "Qual foi a origem da ideia do Programa Periódico de Qualidade?",
+      "media": null,
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        { "text": "Reuniões internas", "correct": false },
+        { "text": "Visitas técnicas aos clientes", "correct": true },
+        { "text": "Pesquisas de mercado", "correct": false },
+        { "text": "Treinamentos da equipe", "correct": false }
+      ]
+    },
+    {
+      "position": 2,
+      "text": "Qual é o principal objetivo do programa?",
+      "media": null,
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        { "text": "Criar novas funcionalidades", "correct": false },
+        { "text": "Substituir o time de Qualidade", "correct": false },
+        { "text": "Entender o sistema pela visão do cliente", "correct": true },
+        { "text": "Treinar apenas os desenvolvedores", "correct": false }
+      ]
+    },
+    {
+      "position": 3,
+      "text": "Quem participa dos testes?",
+      "media": null,
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        { "text": "Apenas o time de Qualidade", "correct": false },
+        { "text": "Apenas o time de Produto", "correct": false },
+        { "text": "Pessoas de diferentes áreas", "correct": true },
+        { "text": "Somente os gestores", "correct": false }
+      ]
+    },
+    {
+      "position": 4,
+      "text": "O programa testa somente funcionalidades novas?",
+      "media": null,
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        { "text": "Sim, somente novidades", "correct": false },
+        { "text": "Não, também reavalia funcionalidades existentes", "correct": true },
+        { "text": "Sim, mas apenas as mais utilizadas", "correct": false },
+        { "text": "Não, testa apenas funcionalidades antigas", "correct": false }
+      ]
+    },
+    {
+      "position": 5,
+      "text": "Se um cliente utiliza uma planilha em vez de uma funcionalidade do sistema, o que devemos fazer?",
+      "media": null,
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        { "text": "Ignorar a situação", "correct": false },
+        { "text": "Pedir para excluir a planilha", "correct": false },
+        { "text": "Entender por que ele não utiliza a funcionalidade", "correct": true },
+        { "text": "Considerar que o cliente não sabe usar o sistema", "correct": false }
+      ]
+    },
+    {
+      "position": 6,
+      "text": "Onde os testes do programa podem acontecer?",
+      "media": null,
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        { "text": "Somente na sede da empresa", "correct": false },
+        { "text": "Apenas em obras", "correct": false },
+        { "text": "Em diferentes ambientes, inclusive remotamente", "correct": true },
+        { "text": "Somente durante reuniões presenciais", "correct": false }
+      ]
+    }
+  ]
+}

@@ -33,15 +33,13 @@ export const quizFileSchema = z
   })
   .superRefine((quiz, ctx) => {
     const positions = quiz.questions.map((q) => q.position).sort((a, b) => a - b);
-    positions.forEach((position, index) => {
-      if (position !== index + 1) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["questions"],
-          message: `As posições devem ser 1..${positions.length} sem buracos nem repetições (encontrado: ${positions.join(", ")})`,
-        });
-      }
-    });
+    if (positions.some((position, index) => position !== index + 1)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["questions"],
+        message: `As posições devem ser 1..${positions.length} sem buracos nem repetições (encontrado: ${positions.join(", ")})`,
+      });
+    }
   });
 
 export type QuizFile = z.infer<typeof quizFileSchema>;
