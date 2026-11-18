@@ -1,0 +1,342 @@
+/* Componentes compartilhados entre celular, web e telão. Só tokens de cor. */
+
+/* ---------------------------------------------------------------- Pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pillDark {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.pillLight {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.pillBrand {
+  background: var(--color-brand);
+  color: var(--color-ink);
+}
+
+/* ---------------------------------------------------------------- Alternativas */
+.tile {
+  --tile-bg: var(--answer-0-bg);
+  --tile-fg: var(--answer-0-fg);
+  --tile-shape: var(--answer-0-shape);
+  --tile-shadow: var(--color-ink);
+  --tile-border: var(--answer-0-bg);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--tile-bg);
+  color: var(--tile-fg);
+  font-family: var(--font-body);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.tile[data-position="1"] {
+  --tile-bg: var(--answer-1-bg);
+  --tile-fg: var(--answer-1-fg);
+  --tile-shape: var(--answer-1-shape);
+  --tile-shadow: var(--color-brand);
+  --tile-border: var(--color-brand);
+}
+
+.tile[data-position="2"] {
+  --tile-bg: var(--answer-2-bg);
+  --tile-fg: var(--answer-2-fg);
+  --tile-shape: var(--answer-2-shape);
+  --tile-border: var(--answer-2-bg);
+}
+
+.tile[data-position="3"] {
+  --tile-bg: var(--answer-3-bg);
+  --tile-fg: var(--answer-3-fg);
+  --tile-shape: var(--answer-3-shape);
+  --tile-border: var(--answer-3-bg);
+}
+
+.tileShape {
+  flex-shrink: 0;
+  fill: var(--tile-shape);
+}
+
+/* Celular: botão de largura total, cresce para ocupar a tela */
+.tilePhone {
+  flex: 1 1 0;
+  min-height: 64px;
+  border: var(--border-mobile);
+  border-radius: 22px;
+  box-shadow: 6px 6px 0 var(--tile-shadow);
+  padding: 0 20px;
+  gap: 16px;
+  font-size: 20px;
+  transition:
+    transform 80ms ease,
+    box-shadow 80ms ease;
+}
+
+.tilePhone:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0 var(--tile-shadow);
+}
+
+.tilePhone:disabled {
+  opacity: 0.55;
+}
+
+/* Web: grade fluida */
+.tileWeb {
+  min-height: 9.5rem;
+  border: var(--border-mobile);
+  border-radius: 28px;
+  box-shadow: 8px 8px 0 var(--tile-shadow);
+  padding: 1rem 1.75rem;
+  gap: 1.25rem;
+  font-size: 1.625rem;
+  transition:
+    transform 80ms ease,
+    box-shadow 80ms ease;
+}
+
+.tileWeb:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 10px 10px 0 var(--tile-shadow);
+}
+
+.tileWeb:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0 var(--tile-shadow);
+}
+
+/* Telão: pergunta aberta */
+.tileScreen {
+  height: 170px;
+  border: 5px solid var(--tile-border);
+  border-radius: 32px;
+  padding: 0 44px;
+  gap: 32px;
+  font-size: 46px;
+}
+
+/* Telão: resultado */
+.tileResult {
+  height: 150px;
+  border-radius: 28px;
+  padding: 0 28px;
+  gap: 20px;
+  font-size: 34px;
+}
+
+.tileResult[data-correct="true"] {
+  --tile-bg: var(--color-paper);
+  --tile-fg: var(--color-ink);
+  --tile-shape: var(--color-ink);
+  box-shadow: 8px 8px 0 var(--color-brand);
+}
+
+.tileResult[data-correct="false"] {
+  --tile-bg: var(--color-surface-on-ink);
+  --tile-fg: var(--color-muted-on-ink);
+  --tile-shape: var(--color-muted-on-ink);
+}
+
+/* ---------------------------------------------------------------- Botões */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    transform 80ms ease,
+    box-shadow 80ms ease,
+    opacity 120ms ease;
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.6;
+}
+
+.button:active:not(:disabled) {
+  transform: translate(3px, 3px);
+}
+
+/* Celular: preto com texto amarelo */
+.buttonPhone {
+  height: 72px;
+  width: 100%;
+  border-radius: var(--radius-mobile-control);
+  border: var(--border-mobile);
+  background: var(--color-ink);
+  color: var(--color-brand);
+  font-size: 28px;
+}
+
+/* ---------------------------------------------------------------- Cartões */
+.statGrid {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.statCard {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border-radius: 24px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statCardOutlined {
+  border: var(--border-mobile);
+}
+
+.statLabel {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+.statHint {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.positionBadge {
+  width: 250px;
+  height: 250px;
+  max-width: 70vw;
+  max-height: 70vw;
+  background: var(--color-brand);
+  color: var(--color-ink);
+  border-radius: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.positionBadgeOnPaper {
+  border: var(--border-mobile);
+  box-shadow: 10px 10px 0 var(--color-ink);
+  transform: rotate(3deg);
+}
+
+.positionBadgeOnInk {
+  box-shadow: 10px 10px 0 var(--color-paper);
+  transform: rotate(-3deg);
+}
+
+.positionNumber {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 128px;
+  line-height: 0.95;
+  letter-spacing: -3px;
+}
+
+.positionTotal {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- Cronômetro */
+.timerPill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  background: var(--color-brand);
+  border: 3px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  padding: 4px 18px;
+  color: var(--color-ink);
+}
+
+.timerValue {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.timerUnit {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.progress {
+  height: 14px;
+  border: 3px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  overflow: hidden;
+  display: flex;
+}
+
+.progressFill {
+  background: var(--color-brand);
+  transition: width 200ms linear;
+}
+
+/* ---------------------------------------------------------------- Aguardando (3 pontos) */
+.dots {
+  display: flex;
+  gap: 10px;
+}
+
+.dots span {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.dots span:nth-child(2) {
+  opacity: 0.55;
+  animation-delay: 0.2s;
+}
+
+.dots span:nth-child(3) {
+  opacity: 0.25;
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.7);
+  }
+}
