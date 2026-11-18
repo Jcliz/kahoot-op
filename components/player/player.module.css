@@ -115,9 +115,25 @@
 
 /* ---------------------------------------------------------------- Entrada */
 .join {
-  align-items: stretch;
+  /* Coluna de até 30rem centralizada (antes ficava grudada à esquerda no computador) */
+  align-items: center;
   text-align: left;
   padding: 56px 24px 32px;
+}
+
+/* No computador o conjunto também fica centralizado na vertical */
+@media (min-width: 768px) {
+  .join {
+    justify-content: center;
+  }
+
+  .join > .column {
+    flex-grow: 0;
+  }
+
+  .join .shapeFooter {
+    margin-top: 8px;
+  }
 }
 
 .brandLine {

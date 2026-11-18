@@ -256,13 +256,9 @@
 .lobbyBrand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
   font-size: 26px;
   font-weight: 700;
-}
-
-.lobbyBrand > span {
-  margin-left: 8px;
 }
 
 .lobbyTitle {
@@ -1177,4 +1173,9 @@
   border-radius: 18px;
   padding: 12px 24px;
   align-self: flex-start;
+}
+
+/* Selo do logo ObraPrima no telão (o tamanho do selo acompanha o font-size) */
+.brandBadge {
+  font-size: 26px;
 }

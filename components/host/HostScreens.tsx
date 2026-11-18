@@ -3,7 +3,8 @@
  * ScreenIntro e ScreenQuestion também são usadas pelo participante no computador.
  */
 import type { ReactNode } from "react";
-import { AnswerButton, AnswerTile, cx, Deco, ShapeRow } from "@/components/ui";
+import { AnswerButton, AnswerTile, cx, Deco } from "@/components/ui";
+import { BrandBadge } from "@/components/ui/BrandLogo";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -68,7 +69,7 @@ export function HostLobby({
     <div className={cx(styles.screen, styles.onInk)}>
       <section className={styles.lobbyPanel}>
         <div className={styles.lobbyBrand}>
-          <ShapeRow size={34} fill={INK} />
+          <BrandBadge width={190} className={styles.brandBadge} priority />
           <span>{TITLE}</span>
         </div>
         <h1 className={styles.lobbyTitle}>Bora jogar?</h1>
@@ -560,6 +561,7 @@ export function HostRanking({
   return (
     <div className={cx(styles.screen, styles.onPaper)}>
       <section className={styles.rankingPanel}>
+        <BrandBadge width={190} className={styles.brandBadge} />
         <span className={styles.sidePill}>Fim de jogo</span>
         <h1 className={styles.rankingTitle}>Ranking completo</h1>
         <p className={styles.rankingLead}>
