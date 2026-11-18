@@ -52,3 +52,14 @@ export function useRemainingMs(endsAt: number | null, offset: number): number {
 
   return endsAt === null ? 0 : Math.max(endsAt - (now + offset), 0);
 }
+
+/** Fração restante (1 → 0) da fase atual, a partir dos horários do servidor. */
+export function phaseFraction(
+  remainingMs: number,
+  phaseStartedAt: number | null,
+  phaseEndsAt: number | null,
+): number {
+  if (phaseStartedAt === null || phaseEndsAt === null) return 0;
+  const duration = phaseEndsAt - phaseStartedAt;
+  return duration > 0 ? Math.min(Math.max(remainingMs / duration, 0), 1) : 0;
+}

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { clearPlayer, loadPlayer, type StoredPlayer } from "@/lib/client/player-storage";
 import { useMediaQuery } from "@/lib/client/useMediaQuery";
 import { usePlayerGame } from "@/lib/realtime/useGameState";
-import { useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
+import { phaseFraction, useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
 import {
   AnswerSentView,
   ExitView,
@@ -53,7 +53,14 @@ function PlayerGame({ player }: { player: StoredPlayer }) {
       return <LobbyView nickname={me.nickname} />;
 
     case "QUESTION_INTRO":
-      return <PrepareView position={state.position} total={total} />;
+      if (!question) return <LoadingView message="Carregando a pergunta…" />;
+      return (
+        <PrepareView
+          question={question}
+          total={total}
+          fractionLeft={phaseFraction(remainingMs, state.phaseStartedAt, state.phaseEndsAt)}
+        />
+      );
 
     case "QUESTION_OPEN": {
       if (!question) return <LoadingView message="Carregando a pergunta…" />;

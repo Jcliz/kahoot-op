@@ -171,10 +171,22 @@ export function TimerPill({ seconds }: { seconds: number }) {
   );
 }
 
-export function ProgressBar({ fraction, className }: { fraction: number; className?: string }) {
+export function ProgressBar({
+  fraction,
+  surface = "paper",
+  className,
+}: {
+  fraction: number;
+  /** Sobre preto o trilho fica cinza escuro, para o amarelo ter contraste. */
+  surface?: "paper" | "ink";
+  className?: string;
+}) {
   const percent = Math.min(Math.max(fraction, 0), 1) * 100;
   return (
-    <div className={cx(styles.progress, className)} aria-hidden="true">
+    <div
+      className={cx(styles.progress, surface === "ink" && styles.progressOnInk, className)}
+      aria-hidden="true"
+    >
       <div className={styles.progressFill} style={{ width: `${percent}%` }} />
     </div>
   );

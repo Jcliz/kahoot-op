@@ -54,6 +54,11 @@ export class MemoryRepository implements GameRepository {
     this.quizzes.push(...quizzes);
   }
 
+  /** Nova versão do conteúdo; sessões já criadas continuam com o quiz que jogaram. */
+  addQuiz(quiz: QuizRecord) {
+    this.quizzes.push(quiz);
+  }
+
   async getLatestQuiz() {
     return this.quizzes.at(-1) ?? null;
   }

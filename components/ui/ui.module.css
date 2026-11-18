@@ -302,6 +302,11 @@
   display: flex;
 }
 
+.progressOnInk {
+  border-color: var(--color-track-on-ink);
+  background: var(--color-track-on-ink);
+}
+
 .progressFill {
   background: var(--color-brand);
   transition: width 200ms linear;

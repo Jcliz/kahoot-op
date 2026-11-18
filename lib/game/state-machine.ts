@@ -1,7 +1,7 @@
 import type { SessionStatus } from "./types";
 
-/** Duração da tela de abertura da pergunta. */
-export const QUESTION_INTRO_MS = 3_000;
+/** Tempo de leitura: só o enunciado aparece; os 20 s de resposta começam depois. */
+export const QUESTION_INTRO_MS = 5_000;
 
 export type GameAction = "advance" | "close";
 

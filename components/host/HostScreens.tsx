@@ -136,7 +136,7 @@ export function HostIntro({
 }) {
   return (
     <div className={cx(styles.screen, styles.onBrand, styles.intro)}>
-      {/* Baixa a mídia durante os 3 s de abertura para ela já aparecer pronta na pergunta. */}
+      {/* Baixa a mídia durante o tempo de leitura para ela já aparecer pronta na pergunta. */}
       {question.mediaUrl && (
         <link
           rel="preload"

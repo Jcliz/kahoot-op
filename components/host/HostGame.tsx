@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useHostGame } from "@/lib/realtime/useGameState";
-import { useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
+import { phaseFraction, useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
 import {
   HostIntro,
   HostLeaderboard,
@@ -70,7 +70,7 @@ export function HostGame({ sessionId }: { sessionId: string }) {
   const status = state?.status;
   const versionKey = `${status}:${state?.version}`;
 
-  // Abertura de 3 s: o telão dispara o avanço; se travar, há o botão "Abrir agora".
+  // Tempo de leitura (só o enunciado): o telão dispara o avanço; se travar, há o botão "Abrir agora".
   useActionAt(
     status === "QUESTION_INTRO" ? (state?.phaseEndsAt ?? null) : null,
     offset,
@@ -137,7 +137,7 @@ export function HostGame({ sessionId }: { sessionId: string }) {
         <HostIntro
           question={question}
           total={state.totalQuestions}
-          fractionLeft={remainingMs / 3_000}
+          fractionLeft={phaseFraction(remainingMs, state.phaseStartedAt, state.phaseEndsAt)}
           busy={busy}
           onSkip={() => void advance()}
         />

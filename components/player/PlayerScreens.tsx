@@ -80,31 +80,44 @@ export function LobbyView({ nickname }: { nickname: string }) {
 
 // ------------------------------------------------------------------- Prepare-se
 
-export function PrepareView({ position, total }: { position: number; total: number }) {
+/**
+ * Tempo de leitura: só o enunciado, sem alternativas, para pensar antes de responder.
+ * O cronômetro de resposta só começa quando as alternativas aparecem.
+ */
+export function PrepareView({
+  question,
+  total,
+  fractionLeft,
+}: {
+  question: PublicQuestion;
+  total: number;
+  fractionLeft: number;
+}) {
   return (
-    <main className={cx(styles.screen, styles.onInk)} style={{ gap: 36, justifyContent: "center" }}>
+    <main className={cx(styles.screen, styles.onInk, styles.prepare)}>
+      {/* Só decorações no topo: embaixo ficam o aviso e a barra de tempo. */}
       <Deco position={0} size={130} fill={BRAND} left={-36} top={30} rotate={-16} />
       <Deco position={2} size={110} fill={PAPER} right={-30} top={64} />
-      <Deco
-        position={1}
-        size={120}
-        fill="none"
-        stroke={BRAND}
-        strokeWidth={1.4}
-        left={30}
-        bottom={50}
-        rotate={10}
-      />
-      <Deco position={3} size={100} fill={BRAND_SOFT} right={24} bottom={-24} rotate={18} />
-      <h1 className={cx(styles.prepareTitle, styles.above)}>Prepare-se!</h1>
-      <div key={position} className={styles.prepareCard}>
-        <span className={styles.prepareSmall}>Pergunta</span>
-        <span className={styles.prepareNumber}>{position}</span>
-        <span className={styles.prepareTotal}>de {total}</span>
+      <div className={cx(styles.column, styles.prepareColumn)}>
+        <Pill tone="brand" className={styles.above}>
+          Pergunta {progressLabel(question.position, total)}
+        </Pill>
+        <div key={question.id} className={styles.prepareBody}>
+          <span className={styles.prepareKicker}>Prepare-se!</span>
+          <h1
+            className={cx(
+              styles.prepareQuestion,
+              question.text.length > 80 && styles.prepareQuestionLong,
+            )}
+          >
+            {question.text}
+          </h1>
+        </div>
+        <div className={styles.prepareFooter}>
+          <span>As alternativas aparecem em instantes</span>
+          <ProgressBar fraction={fractionLeft} surface="ink" />
+        </div>
       </div>
-      <p className={cx(styles.prepareTip, styles.above)}>
-        Quanto mais rápido você acertar, mais pontos ganha.
-      </p>
     </main>
   );
 }
@@ -123,7 +136,10 @@ interface QuestionViewProps {
   onAnswer: (optionId: string, position: OptionPosition) => void;
 }
 
-/** Sem rolagem e sem GIF no celular: só número, tempo, enunciado e os 4 botões. */
+/**
+ * Celular: sem rolagem e sem GIF (economiza dados), só número, tempo, enunciado e os 4 botões.
+ * Computador: ocupa a tela inteira como o telão, com o GIF ao lado do enunciado.
+ */
 export function QuestionView({
   question,
   total,
@@ -160,7 +176,10 @@ export function QuestionView({
             </div>
             <ProgressBar fraction={fractionLeft} />
           </div>
-          <h1 className={styles.webQuestionText}>{question.text}</h1>
+          <div className={styles.webMiddle}>
+            <h1 className={styles.webQuestionText}>{question.text}</h1>
+            {question.mediaUrl && <QuestionMedia src={question.mediaUrl} />}
+          </div>
           {error && <p className={styles.inlineError}>{error}</p>}
           <div className={styles.webOptions}>{options}</div>
         </div>
@@ -184,6 +203,25 @@ export function QuestionView({
       <div className={styles.options}>{options}</div>
     </main>
   );
+}
+
+/** GIF/imagem ou vídeo em loop da pergunta (só no layout de computador). */
+function QuestionMedia({ src }: { src: string }) {
+  if (/\.(mp4|webm)$/i.test(src)) {
+    return (
+      <video
+        className={styles.webMedia}
+        src={src}
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden="true"
+      />
+    );
+  }
+  // eslint-disable-next-line @next/next/no-img-element -- GIF animado: o next/image não preserva a animação
+  return <img className={styles.webMedia} src={src} alt="" />;
 }
 
 // ------------------------------------------------------------------- Resposta enviada
