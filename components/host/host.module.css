@@ -5,18 +5,14 @@
   inset: 0;
   overflow: hidden;
   background: var(--color-ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
+/* Largura e altura vêm do ScreenStage: a menor dimensão vale 1920×1080 e a outra estica. */
 .stage {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1920px;
-  height: 1080px;
-  transform-origin: center center;
+  left: 0;
+  top: 0;
+  transform-origin: top left;
   overflow: hidden;
   font-family: var(--font-body);
 }
@@ -335,10 +331,11 @@
 
 .pinValue {
   composes: display;
-  font-size: 88px;
+  /* 80 px cabe até no PIN mais largo ("888 888") ao lado do QR code */
+  font-size: 80px;
   line-height: 1;
-  letter-spacing: 2px;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .lobbyMain {
