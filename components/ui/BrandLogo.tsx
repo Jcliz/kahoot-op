@@ -1,56 +1,29 @@
 import Image from "next/image";
-import styles from "./brand.module.css";
 
 /**
- * Logo da ObraPrima (arquivos originais do repositório OP, em public/brand).
- * "light": "obra" em cinza, para fundo branco.
- * "dark": "obra" em branco, para fundo preto.
- * O cubo e o "prima" são amarelo/laranja e somem sobre o amarelo da marca:
- * em fundo amarelo use o BrandBadge.
+ * Símbolo da ObraPrima (só o cubo, sem o texto), recortado do logo original
+ * do repositório OP. Fica legível direto sobre o amarelo da marca, sem selo.
  */
-const LOGOS = {
-  light: { src: "/brand/obraprima-logo.png", width: 274, height: 64 },
-  dark: { src: "/brand/obraprima-logo-negativo.png", width: 628, height: 183 },
-} as const;
+const SYMBOL = { src: "/brand/obraprima-simbolo.png", width: 130, height: 135 } as const;
 
-export function BrandLogo({
-  surface,
-  width,
+export function BrandSymbol({
+  height,
   className,
   priority = false,
 }: {
-  surface: "light" | "dark";
-  /** Largura exibida em px; a altura segue a proporção do arquivo. */
-  width: number;
+  /** Altura exibida em px; a largura segue a proporção do arquivo. */
+  height: number;
   className?: string;
   priority?: boolean;
 }) {
-  const logo = LOGOS[surface];
   return (
     <Image
-      src={logo.src}
+      src={SYMBOL.src}
       alt="ObraPrima"
-      width={width}
-      height={Math.round((width * logo.height) / logo.width)}
+      width={Math.round((height * SYMBOL.width) / SYMBOL.height)}
+      height={height}
       className={className}
       priority={priority}
     />
-  );
-}
-
-/** Selo preto com o logo, para telas de fundo amarelo. */
-export function BrandBadge({
-  width,
-  className,
-  priority = false,
-}: {
-  width: number;
-  className?: string;
-  priority?: boolean;
-}) {
-  return (
-    <span className={[styles.badge, className].filter(Boolean).join(" ")}>
-      <BrandLogo surface="dark" width={width} priority={priority} />
-    </span>
   );
 }

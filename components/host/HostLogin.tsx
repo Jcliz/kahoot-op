@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { cx, Deco } from "@/components/ui";
-import { BrandBadge } from "@/components/ui/BrandLogo";
+import { BrandSymbol } from "@/components/ui/BrandLogo";
 import { ApiRequestError, postJson } from "@/lib/client/api";
 import { ScreenStage } from "./ScreenStage";
 import styles from "./host.module.css";
@@ -67,7 +67,7 @@ export function HostLogin({ authenticated }: { authenticated: boolean }) {
         />
 
         <div className={cx(styles.loginIntro, styles.above)}>
-          <BrandBadge width={220} className={styles.brandBadge} priority />
+          <BrandSymbol height={72} className={styles.brandSymbol} priority />
           <span className={styles.kicker}>Quiz ao vivo</span>
           <h1 className={styles.loginTitle}>Programa Periódico de Qualidade</h1>
           <p className={styles.loginLead}>

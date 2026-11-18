@@ -4,7 +4,7 @@
  */
 import type { ReactNode } from "react";
 import { AnswerButton, AnswerTile, cx, Deco } from "@/components/ui";
-import { BrandBadge } from "@/components/ui/BrandLogo";
+import { BrandSymbol } from "@/components/ui/BrandLogo";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -66,7 +66,7 @@ export function HostLobby({
     <div className={cx(styles.screen, styles.onInk)}>
       <section className={styles.lobbyPanel}>
         <div className={styles.lobbyBrand}>
-          <BrandBadge width={190} className={styles.brandBadge} priority />
+          <BrandSymbol height={64} priority />
           <span>{TITLE}</span>
         </div>
         <h1 className={styles.lobbyTitle}>Bora jogar?</h1>
@@ -484,7 +484,7 @@ export function HostRanking({
   return (
     <div className={cx(styles.screen, styles.onPaper)}>
       <section className={styles.rankingPanel}>
-        <BrandBadge width={190} className={styles.brandBadge} />
+        <BrandSymbol height={64} className={styles.brandSymbol} />
         <span className={styles.sidePill}>Fim de jogo</span>
         <h1 className={styles.rankingTitle}>Ranking completo</h1>
         <p className={styles.rankingLead}>

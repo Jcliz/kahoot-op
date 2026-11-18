@@ -1045,7 +1045,7 @@
   align-self: flex-start;
 }
 
-/* Selo do logo ObraPrima no telão (o tamanho do selo acompanha o font-size) */
-.brandBadge {
-  font-size: 26px;
+/* Símbolo da ObraPrima solto numa coluna flex: não estica, fica à esquerda */
+.brandSymbol {
+  align-self: flex-start;
 }
