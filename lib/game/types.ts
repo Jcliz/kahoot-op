@@ -77,12 +77,13 @@ export interface PlayerView {
   nickname: string;
   score: number;
   correctCount: number;
+  /** Posição no ranking; 0 enquanto o placar não está congelado (lobby e pergunta). */
   rank: number;
   totalPlayers: number;
   /** Resposta enviada para a pergunta atual, se houver. */
   currentAnswer: { questionId: string; optionPosition: OptionPosition } | null;
-  /** Resultado da pergunta atual; só existe a partir de RESULTS. */
-  lastResult: { questionId: string; correct: boolean; points: number } | null;
+  /** Resultado da pergunta atual; só existe de RESULTS até o pódio. */
+  lastResult: { questionId: string; answered: boolean; correct: boolean; points: number } | null;
   /** Distância para quem está imediatamente à frente; null para o 1º lugar. */
   ahead: { rank: number; gap: number } | null;
 }
