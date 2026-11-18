@@ -49,16 +49,27 @@ function useLiveSync({
     refreshRef.current = refresh;
   });
 
+  // O servidor assina um token novo a cada retrato (muda o `iat`). Guardar num ref
+  // em vez de usar como dependência evita derrubar e refazer o canal a cada
+  // refresh — o que, somado ao refresh feito ao conectar, virava um ciclo de
+  // reconexão sem fim.
   const accessToken = access?.token;
+  const tokenRef = useRef(accessToken);
+  useEffect(() => {
+    if (accessToken) tokenRef.current = accessToken;
+  }, [accessToken]);
+
+  const hasToken = Boolean(accessToken);
   const accessUrl = access?.url;
   const accessKey = access?.anonKey;
   const subscriptionKey = subscriptions ? JSON.stringify(subscriptions) : null;
 
   // Canal de tempo real
   useEffect(() => {
-    if (!accessToken || !accessUrl || !accessKey || !subscriptionKey) return;
+    if (!hasToken || !accessUrl || !accessKey || !subscriptionKey) return;
     const unsubscribe = subscribeChannels(
-      { token: accessToken, url: accessUrl, anonKey: accessKey },
+      { url: accessUrl, anonKey: accessKey },
+      () => tokenRef.current ?? "",
       JSON.parse(subscriptionKey) as ChannelSubscription[],
       (topic, event, payload) => onMessageRef.current(topic, event, payload),
       (status) => {
@@ -68,7 +79,7 @@ function useLiveSync({
       },
     );
     return unsubscribe;
-  }, [accessToken, accessUrl, accessKey, subscriptionKey]);
+  }, [hasToken, accessUrl, accessKey, subscriptionKey]);
 
   // Polling de reserva
   const realtimeAvailable = access !== null;

@@ -14,18 +14,23 @@ export interface ChannelSubscription {
  * O token vem do servidor e a política do banco recusa qualquer publicação.
  */
 export function subscribeChannels(
-  access: RealtimeAccess,
+  access: Pick<RealtimeAccess, "url" | "anonKey">,
+  /** Lido a cada (re)conexão: o servidor manda um token novo em cada retrato. */
+  getToken: () => string,
   subscriptions: ChannelSubscription[],
   onMessage: (topic: string, event: string, payload: unknown) => void,
   onStatus: (status: ChannelStatus) => void,
 ): () => void {
   const client: SupabaseClient = createClient(access.url, access.anonKey, {
-    accessToken: async () => access.token,
+    accessToken: async () => getToken(),
     realtime: { params: { eventsPerSecond: 5 } },
   });
 
+  let disposed = false;
   const statuses = new Map<string, ChannelStatus>();
   const report = () => {
+    // Ao desmontar, os canais avisam CLOSED: não é queda, é só a limpeza.
+    if (disposed) return;
     const values = [...statuses.values()];
     onStatus(
       values.length > 0 && values.every((s) => s === "live")
@@ -52,6 +57,7 @@ export function subscribeChannels(
   });
 
   return () => {
+    disposed = true;
     for (const channel of channels) void client.removeChannel(channel);
     void client.realtime.disconnect();
   };
