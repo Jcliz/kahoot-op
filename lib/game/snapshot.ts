@@ -4,6 +4,7 @@
  */
 import type { AnswerRecord, QuestionRecord, QuizRecord, SessionRecord } from "@/lib/db/repository";
 import type { RankedStanding } from "./scoring";
+import { FROZEN_STATUSES } from "./status";
 import type {
   GameState,
   OptionPosition,
@@ -13,14 +14,6 @@ import type {
   RankEntry,
   SessionStatus,
 } from "./types";
-
-/** Fases em que nenhuma resposta nova entra: o placar está congelado. */
-export const FROZEN_STATUSES: ReadonlySet<SessionStatus> = new Set([
-  "RESULTS",
-  "LEADERBOARD",
-  "PODIUM",
-  "FINISHED",
-]);
 
 const QUESTION_STATUSES: ReadonlySet<SessionStatus> = new Set([
   "QUESTION_INTRO",

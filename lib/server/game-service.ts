@@ -17,9 +17,9 @@ import {
   buildPlayerView,
   buildResults,
   currentQuestion,
-  FROZEN_STATUSES,
   toRankEntries,
 } from "@/lib/game/snapshot";
+import { FROZEN_STATUSES } from "@/lib/game/status";
 import { transition, type GameAction } from "@/lib/game/state-machine";
 import {
   hostTopic,
