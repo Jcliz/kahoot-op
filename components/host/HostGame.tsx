@@ -10,18 +10,15 @@ import {
   HostLeaderboard,
   HostLoading,
   HostLobby,
-  HostPodium,
   HostQuestionControls,
   HostRanking,
   HostResults,
   ScreenIntro,
   ScreenQuestion,
 } from "./HostScreens";
+import { PodiumReveal } from "./PodiumReveal";
 import { ScreenStage } from "./ScreenStage";
 import styles from "./host.module.css";
-
-/** Pausa entre a revelação do 3º, do 2º e do 1º lugar. */
-const PODIUM_REVEAL_MS = 2_200;
 
 function toggleFullscreen() {
   if (document.fullscreenElement) void document.exitFullscreen();
@@ -87,20 +84,6 @@ export function HostGame({ sessionId }: { sessionId: string }) {
     versionKey,
     () => void closeQuestion("timeout"),
   );
-
-  // Pódio: revela 3º, 2º e 1º em sequência.
-  const [revealed, setRevealed] = useState({ key: "", count: 0 });
-  useEffect(() => {
-    if (status !== "PODIUM") return;
-    const timers = [1, 2, 3].map((count) =>
-      window.setTimeout(
-        () => setRevealed({ key: versionKey, count }),
-        PODIUM_REVEAL_MS * count - 1_200,
-      ),
-    );
-    return () => timers.forEach((t) => window.clearTimeout(t));
-  }, [status, versionKey]);
-  const revealedCount = revealed.key === versionKey ? revealed.count : 0;
 
   if (fatal === "not_found") {
     return (
@@ -193,9 +176,9 @@ export function HostGame({ sessionId }: { sessionId: string }) {
       break;
     case "PODIUM":
       screen = (
-        <HostPodium
+        <PodiumReveal
+          key={versionKey}
           podium={state.podium ?? []}
-          revealed={revealedCount}
           busy={busy}
           onShowRanking={() => void advance()}
         />

@@ -9,7 +9,6 @@ import {
   ArrowRightIcon,
   CheckIcon,
   CloseIcon,
-  CrownIcon,
   DownloadIcon,
   FullscreenIcon,
   PlayIcon,
@@ -28,8 +27,6 @@ import styles from "./host.module.css";
 
 const INK = "var(--color-ink)";
 const PAPER = "var(--color-paper)";
-const BRAND = "var(--color-brand)";
-const BRAND_SOFT = "var(--color-brand-soft)";
 const TITLE = "Programa Periódico de Qualidade";
 
 const progressLabel = (position: number, total: number) => `${position} de ${total}`;
@@ -469,80 +466,6 @@ export function HostLeaderboard({
           </li>
         ))}
       </ol>
-    </div>
-  );
-}
-
-// ------------------------------------------------------------------- Pódio
-
-export function HostPodium({
-  podium,
-  revealed,
-  busy,
-  onShowRanking,
-}: {
-  podium: RankEntry[];
-  /** Quantos lugares já foram revelados (3º, depois 2º, depois 1º). */
-  revealed: number;
-  busy: boolean;
-  onShowRanking: () => void;
-}) {
-  const byPlace = (place: number) => podium.find((e) => e.rank === place);
-  // Revela o 3º primeiro: com 3 revelados, todos aparecem.
-  const isRevealed = (place: number) => revealed >= 4 - place;
-  const columns = [2, 1, 3].filter((place) => byPlace(place));
-
-  return (
-    <div className={cx(styles.screen, styles.onInk, styles.podium)}>
-      <Deco position={0} size={90} fill={BRAND} left={150} top={250} rotate={-18} />
-      <Deco position={3} size={64} fill={BRAND_SOFT} left={330} top={470} rotate={20} />
-      <Deco position={2} size={70} fill={PAPER} left={90} top={640} />
-      <Deco position={1} size={80} fill={PAPER} right={170} top={230} rotate={14} />
-      <Deco position={2} size={60} fill={BRAND} right={360} top={420} />
-      <Deco position={0} size={96} fill={BRAND_SOFT} right={80} top={600} rotate={-24} />
-      <Deco position={3} size={54} fill={PAPER} left={620} top={190} rotate={30} />
-      <Deco position={1} size={54} fill={BRAND} right={640} top={170} rotate={8} />
-
-      <header className={cx(styles.podiumHeader, styles.above)}>
-        <h1 className={styles.podiumTitle}>Pódio</h1>
-        {revealed >= 3 && (
-          <button
-            type="button"
-            className={styles.btnSecondary}
-            onClick={onShowRanking}
-            disabled={busy}
-          >
-            Ver ranking completo
-          </button>
-        )}
-      </header>
-
-      <div className={cx(styles.podiumStage, styles.above)}>
-        {columns.map((place) => {
-          const entry = byPlace(place)!;
-          return (
-            <div
-              key={place}
-              className={styles.podiumColumn}
-              data-place={place}
-              data-revealed={isRevealed(place)}
-            >
-              <div className={styles.podiumWho} aria-hidden={!isRevealed(place)}>
-                {place === 1 && (
-                  <span className={styles.podiumCrown}>
-                    <CrownIcon width={120} />
-                  </span>
-                )}
-                <span className={styles.podiumName}>{entry.nickname}</span>
-                <span className={styles.podiumPoints}>{formatPoints(entry.score)} pontos</span>
-              </div>
-              <div className={styles.podiumBlock} data-place={place}>
-                {ordinal(place)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

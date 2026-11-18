@@ -1,0 +1,600 @@
+/* Revelação do pódio no telão: 3º → 2º → tambores e holofotes → 1º com confetes. */
+
+.podium {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 48px 64px 0;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+}
+
+.above {
+  position: relative;
+  z-index: 3;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 96px;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: var(--color-brand);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.button {
+  height: 84px;
+  padding: 0 40px;
+  border-radius: var(--radius-screen-control);
+  border: 4px solid var(--color-paper);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-weight: 700;
+  font-size: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 500ms ease both;
+}
+
+.iconButton {
+  composes: button;
+  width: 84px;
+  padding: 0;
+  animation: none;
+}
+
+/* ---------------------------------------------------------------- Palco e blocos */
+.stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 28px;
+  flex-grow: 1;
+}
+
+.column {
+  width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.column[data-place="1"] {
+  width: 500px;
+}
+
+.who {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  animation: reveal 600ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+.hidden {
+  visibility: hidden;
+  animation: none;
+}
+
+.name {
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.points {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-muted-on-ink);
+}
+
+.block {
+  width: 100%;
+  border-radius: 36px 36px 0 0;
+  color: var(--color-ink);
+  display: flex;
+  justify-content: center;
+  padding-top: 28px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+  transition: box-shadow 600ms ease;
+}
+
+.block[data-place="1"] {
+  height: 470px;
+  background: var(--color-brand);
+  font-size: 240px;
+}
+
+.block[data-place="2"] {
+  height: 340px;
+  background: var(--color-paper);
+  font-size: 180px;
+}
+
+.block[data-place="3"] {
+  height: 250px;
+  background: var(--color-brand-soft);
+  font-size: 150px;
+}
+
+@keyframes reveal {
+  from {
+    transform: translateY(40px) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------- Tensão: escurece o palco */
+.dim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: color-mix(in srgb, var(--color-ink) 70%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 800ms ease;
+}
+
+.podium[data-step="drumroll"] .dim {
+  opacity: 1;
+}
+
+/* 2º e 3º recuam enquanto o 1º é procurado */
+.podium[data-step="drumroll"] .column:not([data-place="1"]) {
+  opacity: 0.35;
+  transition: opacity 800ms ease;
+}
+
+.column {
+  transition: opacity 600ms ease;
+}
+
+/* ---------------------------------------------------------------- Tambor */
+.drumArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fade-in 400ms ease both;
+}
+
+.drumText {
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--color-brand);
+  animation: tremble 90ms linear infinite;
+}
+
+.mystery {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 150px;
+  line-height: 1;
+  color: var(--color-paper);
+  animation: pulse 700ms ease-in-out infinite;
+}
+
+.drum {
+  width: 210px;
+  height: 175px;
+  overflow: visible;
+}
+
+.stickLeft,
+.stickRight {
+  transform-box: fill-box;
+}
+
+.stickLeft {
+  transform-origin: 0% 100%;
+  animation: hit-left 140ms ease-in-out infinite alternate;
+}
+
+.stickRight {
+  transform-origin: 100% 100%;
+  animation: hit-right 140ms ease-in-out infinite alternate;
+  animation-delay: 70ms;
+}
+
+.drumBody {
+  animation: thump 140ms ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+@keyframes hit-left {
+  from {
+    transform: rotate(-24deg);
+  }
+  to {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes hit-right {
+  from {
+    transform: rotate(24deg);
+  }
+  to {
+    transform: rotate(-6deg);
+  }
+}
+
+@keyframes thump {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.96);
+  }
+}
+
+@keyframes tremble {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(2px, -1px);
+  }
+  50% {
+    transform: translate(-1px, 2px);
+  }
+  75% {
+    transform: translate(-2px, -1px);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+/* ---------------------------------------------------------------- Holofotes */
+.spotlights {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.podium[data-step="drumroll"] .spotlights,
+.podium[data-step="first"] .spotlights {
+  opacity: 1;
+}
+
+.podium[data-step="first"] .spotlights {
+  opacity: 0.55;
+  transition-duration: 2500ms;
+}
+
+.spot {
+  position: absolute;
+  top: -60px;
+  width: 560px;
+  height: 1500px;
+  margin-left: -280px;
+  transform-origin: 50% 0;
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-paper) 75%, transparent),
+    color-mix(in srgb, var(--color-brand) 28%, transparent) 55%,
+    transparent 85%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Cada holofote varre o palco e, aos poucos, converge para o bloco do 1º lugar. */
+.spot[data-spot="left"] {
+  left: 28%;
+  transform: rotate(-30deg);
+  animation: search-left 5s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+.spot[data-spot="center"] {
+  left: 50%;
+  transform: rotate(0deg);
+  animation: search-center 5s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+.spot[data-spot="right"] {
+  left: 72%;
+  transform: rotate(30deg);
+  animation: search-right 5s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+/* Depois da revelação ficam parados em cima do vencedor */
+.podium[data-step="first"] .spot {
+  animation: none;
+}
+
+@keyframes search-left {
+  0% {
+    transform: rotate(35deg);
+  }
+  18% {
+    transform: rotate(-50deg);
+  }
+  36% {
+    transform: rotate(20deg);
+  }
+  54% {
+    transform: rotate(-42deg);
+  }
+  70% {
+    transform: rotate(-12deg);
+  }
+  84% {
+    transform: rotate(-36deg);
+  }
+  100% {
+    transform: rotate(-30deg);
+  }
+}
+
+@keyframes search-center {
+  0% {
+    transform: rotate(-40deg);
+  }
+  20% {
+    transform: rotate(38deg);
+  }
+  40% {
+    transform: rotate(-28deg);
+  }
+  60% {
+    transform: rotate(20deg);
+  }
+  78% {
+    transform: rotate(-8deg);
+  }
+  90% {
+    transform: rotate(4deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes search-right {
+  0% {
+    transform: rotate(-35deg);
+  }
+  18% {
+    transform: rotate(50deg);
+  }
+  36% {
+    transform: rotate(-20deg);
+  }
+  54% {
+    transform: rotate(42deg);
+  }
+  70% {
+    transform: rotate(12deg);
+  }
+  84% {
+    transform: rotate(36deg);
+  }
+  100% {
+    transform: rotate(30deg);
+  }
+}
+
+/* Mancha de luz no chão, embaixo do vencedor */
+.floorGlow {
+  position: absolute;
+  left: 50%;
+  bottom: -160px;
+  width: 900px;
+  height: 420px;
+  margin-left: -450px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-brand) 55%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 1200ms ease;
+}
+
+.podium[data-step="drumroll"] .floorGlow {
+  opacity: 0.45;
+}
+
+.podium[data-step="first"] .floorGlow {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- Revelação do 1º */
+.winner {
+  animation: winner-in 1100ms cubic-bezier(0.18, 1.6, 0.35, 1) both;
+}
+
+.winner .name {
+  /* o tamanho vem do componente, pelo comprimento do apelido; nunca quebra no meio */
+  white-space: nowrap;
+  overflow-wrap: normal;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--winner-size, 96px);
+  line-height: 1;
+  color: var(--color-paper);
+  animation: winner-glow 1600ms ease-in-out 1100ms infinite alternate;
+}
+
+.winner .points {
+  font-size: 44px;
+  color: var(--color-brand);
+}
+
+.crown {
+  color: var(--color-brand);
+  animation:
+    crown-drop 900ms cubic-bezier(0.3, 1.6, 0.45, 1) 150ms both,
+    crown-float 2200ms ease-in-out 1100ms infinite alternate;
+}
+
+.podium[data-step="first"] .block[data-place="1"] {
+  animation: block-celebrate 900ms ease-out both;
+  box-shadow:
+    0 0 0 6px var(--color-paper),
+    0 0 120px 30px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+
+@keyframes winner-in {
+  0% {
+    transform: scale(0.2) rotate(-10deg);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.18) rotate(3deg);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0.95) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes winner-glow {
+  from {
+    text-shadow: 0 0 0 transparent;
+  }
+  to {
+    text-shadow: 0 0 40px color-mix(in srgb, var(--color-brand) 80%, transparent);
+  }
+}
+
+@keyframes crown-drop {
+  0% {
+    transform: translateY(-420px) rotate(-25deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(18px) rotate(6deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes crown-float {
+  from {
+    transform: translateY(0) rotate(-3deg);
+  }
+  to {
+    transform: translateY(-14px) rotate(3deg);
+  }
+}
+
+@keyframes block-celebrate {
+  0% {
+    transform: scaleY(1);
+  }
+  30% {
+    transform: scaleY(1.06);
+  }
+  60% {
+    transform: scaleY(0.98);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* ---------------------------------------------------------------- Confetes */
+.confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.piece {
+  position: absolute;
+  top: -60px;
+  /* queda constante, como confete de verdade */
+  animation: fall var(--duration) linear var(--delay) both;
+}
+
+.piece > svg {
+  display: block;
+  animation: flutter var(--flutter) ease-in-out var(--delay) infinite alternate;
+}
+
+@keyframes fall {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--drift), 1400px) rotate(var(--spin));
+    opacity: 0;
+  }
+}
+
+@keyframes flutter {
+  from {
+    transform: rotateX(0deg) scaleX(1);
+  }
+  to {
+    transform: rotateX(70deg) scaleX(0.6);
+  }
+}
