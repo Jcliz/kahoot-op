@@ -136,6 +136,14 @@ export function HostIntro({
 }) {
   return (
     <div className={cx(styles.screen, styles.onBrand, styles.intro)}>
+      {/* Baixa a mídia durante os 3 s de abertura para ela já aparecer pronta na pergunta. */}
+      {question.mediaUrl && (
+        <link
+          rel="preload"
+          href={question.mediaUrl}
+          as={/\.(mp4|webm)$/i.test(question.mediaUrl) ? "video" : "image"}
+        />
+      )}
       <Deco
         position={1}
         size={520}

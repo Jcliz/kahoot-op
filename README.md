@@ -68,9 +68,10 @@ As 6 perguntas ficam em `content/quiz.json`, com o gabarito confirmado (B, C, C,
 Regras validadas no seed: exatamente 4 alternativas, exatamente 1 correta e posições 1..N sem
 buracos. A ordem das alternativas define forma e cor (triângulo, losango, círculo, quadrado).
 
-Mídia é opcional: com `"media": null` o telão simplesmente não mostra o quadro de imagem. Para
-usar, coloque o arquivo em `public/media/` e aponte `"media": "/media/q01.gif"`. GIFs pesados
-podem virar MP4/WebM em loop, que o telão também aceita.
+Cada pergunta tem um GIF em `public/media/` (`q01.gif` a `q06.gif`), mostrado só no telão; o
+celular nunca baixa mídia. O telão pré-carrega o GIF durante os 3 s de abertura. A mídia é
+opcional: com `"media": null` o quadro de imagem some. GIFs pesados podem virar MP4/WebM em loop,
+que o telão também aceita.
 
 Depois de editar, rode `npm run seed`. Cada importação cria uma versão nova do quiz (as sessões
 antigas continuam apontando para o conteúdo que jogaram) e conteúdo idêntico não é duplicado.
