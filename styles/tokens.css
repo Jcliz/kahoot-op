@@ -2,8 +2,8 @@
    Tokens de design. O código usa só estes tokens, nunca hex solto nos componentes. */
 :root {
   /* Cores base */
-  --color-brand: #ffd60a; /* amarelo principal (PROVISÓRIO: trocar pelo hex oficial da ObraPrima) */
-  --color-brand-soft: #ffe78a; /* amarelo claro: 4ª alternativa, 3º lugar do pódio, decoração */
+  --color-brand: #ffcd00; /* amarelo oficial da ObraPrima (logo); 12,6:1 com o preto */
+  --color-brand-soft: #ffe680; /* amarelo oficial 50% com branco: 4ª alternativa, 3º lugar, decoração */
   --color-ink: #111111; /* preto: fundo do telão, textos, contornos */
   --color-paper: #ffffff; /* branco: fundo do celular, cartões, textos sobre preto */
   --color-danger: #d9201a; /* único tom fora da paleta: "Errou" e mensagens de erro */

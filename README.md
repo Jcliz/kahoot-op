@@ -64,10 +64,13 @@ se atualizam pelo polling de reserva (1 s). **Só funciona com um processo**: nu
 
 ## Conteúdo do quiz
 
-As perguntas ficam em `content/quiz.json`. Regras validadas no seed: exatamente 4 alternativas,
-exatamente 1 correta e posições 1..N sem buracos. A ordem das alternativas define forma e cor
-(triângulo, losango, círculo, quadrado). Mídia vai em `public/media/` (ex.: `"media": "/media/q01.gif"`);
-GIFs pesados podem virar MP4/WebM em loop, que o telão também aceita.
+As 6 perguntas ficam em `content/quiz.json`, com o gabarito confirmado (B, C, C, B, C, C).
+Regras validadas no seed: exatamente 4 alternativas, exatamente 1 correta e posições 1..N sem
+buracos. A ordem das alternativas define forma e cor (triângulo, losango, círculo, quadrado).
+
+Mídia é opcional: com `"media": null` o telão simplesmente não mostra o quadro de imagem. Para
+usar, coloque o arquivo em `public/media/` e aponte `"media": "/media/q01.gif"`. GIFs pesados
+podem virar MP4/WebM em loop, que o telão também aceita.
 
 Depois de editar, rode `npm run seed`. Cada importação cria uma versão nova do quiz (as sessões
 antigas continuam apontando para o conteúdo que jogaram) e conteúdo idêntico não é duplicado.
@@ -126,10 +129,10 @@ e2e                      testes Playwright
 
 ## Pendências (antes do evento)
 
-- [ ] Enviar as perguntas 4, 7 e 8. Hoje o quiz tem as 6 conhecidas, renumeradas de 1 a 6.
-- [ ] Confirmar o gabarito das 6 perguntas (inferido pelo conteúdo).
-- [ ] Baixar as mídias para `public/media/` e preencher `media` no `quiz.json`.
-- [ ] Trocar `--color-brand` em `styles/tokens.css` pelo hex oficial da ObraPrima e conferir o contraste.
+- [x] Perguntas: são 6 no total.
+- [x] Gabarito confirmado: B, C, C, B, C, C.
+- [x] Amarelo oficial da ObraPrima (`#FFCD00`, medido no logo) em `styles/tokens.css`; contraste
+      de 12,6:1 com o preto.
 - [ ] Criar o projeto Supabase, rodar migrations e seed, configurar a Vercel.
 - [ ] Rodar `npm run load-test -- --clients=150` contra a Vercel (o resultado local não vale para
       produção). Se aparecer `tenant_events` ou `too_many_connections`, ativar o plano Pro do
