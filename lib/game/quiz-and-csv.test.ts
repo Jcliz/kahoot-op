@@ -87,7 +87,7 @@ describe("CSV", () => {
       2,
     );
     expect(csv).toBe(
-      "﻿posicao;apelido;pontos;acertos;P1;P2\r\n1;Ana;1900;2;1;1\r\n2;Bia;0;0;0;\r\n",
+      "\uFEFFposicao;apelido;pontos;acertos;P1;P2\r\n1;Ana;1900;2;1;1\r\n2;Bia;0;0;0;\r\n",
     );
   });
 });

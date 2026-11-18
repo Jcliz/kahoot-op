@@ -77,7 +77,7 @@ async function main() {
 
   const csv = await host.exportCsv(sessionId);
   const rows = csv
-    .replace(/^﻿/, "")
+    .replace(/^\uFEFF/, "")
     .trim()
     .split(/\r?\n/)
     .slice(1)

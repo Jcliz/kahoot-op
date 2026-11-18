@@ -7,7 +7,7 @@ export interface CsvAnswer {
 }
 
 const SEPARATOR = ";"; // padrão do Excel em pt-BR
-const BOM = "﻿"; // faz o Excel abrir o arquivo como UTF-8
+const BOM = "\uFEFF"; // faz o Excel abrir o arquivo como UTF-8
 
 /** Escapa o campo e neutraliza fórmulas (apelido começando com =, +, - ou @). */
 export function csvField(value: string | number): string {

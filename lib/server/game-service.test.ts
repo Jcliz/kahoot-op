@@ -322,7 +322,7 @@ describe("GameService", () => {
 
     const csv = await h.service.exportCsv(sessionId);
     expect(csv.split("\r\n").slice(0, 4)).toEqual([
-      "﻿posicao;apelido;pontos;acertos;P1;P2",
+      "\uFEFFposicao;apelido;pontos;acertos;P1;P2",
       "1;Bia;1875;2;1;1",
       "2;Caio;975;1;0;1",
       "3;Ana;950;1;1;",
