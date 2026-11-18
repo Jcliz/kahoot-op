@@ -103,33 +103,8 @@
     },
     {
       "position": 5,
-      "text": "Se um cliente utiliza uma planilha em vez de uma funcionalidade do sistema, o que devemos fazer?",
-      "media": "/media/q05.gif",
-      "timeLimitSeconds": 20,
-      "pointsMultiplier": 1,
-      "options": [
-        {
-          "text": "Ignorar a situação",
-          "correct": false
-        },
-        {
-          "text": "Pedir para excluir a planilha",
-          "correct": false
-        },
-        {
-          "text": "Entender por que ele não utiliza a funcionalidade",
-          "correct": true
-        },
-        {
-          "text": "Considerar que o cliente não sabe usar o sistema",
-          "correct": false
-        }
-      ]
-    },
-    {
-      "position": 6,
       "text": "Onde os testes do programa podem acontecer?",
-      "media": "/media/q06.gif",
+      "media": "/media/q05.gif",
       "timeLimitSeconds": 20,
       "pointsMultiplier": 1,
       "options": [
@@ -147,6 +122,31 @@
         },
         {
           "text": "Somente durante reuniões presenciais",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "position": 6,
+      "text": "Se um cliente utiliza uma planilha em vez de uma funcionalidade do sistema, o que devemos fazer?",
+      "media": "/media/q06.gif",
+      "timeLimitSeconds": 20,
+      "pointsMultiplier": 1,
+      "options": [
+        {
+          "text": "Ignorar a situação",
+          "correct": false
+        },
+        {
+          "text": "Pedir para excluir a planilha",
+          "correct": false
+        },
+        {
+          "text": "Entender por que ele não utiliza a funcionalidade",
+          "correct": true
+        },
+        {
+          "text": "Considerar que o cliente não sabe usar o sistema",
           "correct": false
         }
       ]
