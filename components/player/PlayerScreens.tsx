@@ -127,66 +127,26 @@ export function PrepareView({
 interface QuestionViewProps {
   question: PublicQuestion;
   total: number;
-  nickname: string;
   secondsLeft: number;
   fractionLeft: number;
   disabled: boolean;
   error: string | null;
-  layout: "phone" | "web";
   onAnswer: (optionId: string, position: OptionPosition) => void;
 }
 
 /**
- * Celular: sem rolagem e sem GIF (economiza dados), só número, tempo, enunciado e os 4 botões.
- * Computador: ocupa a tela inteira como o telão, com o GIF ao lado do enunciado.
+ * Pergunta no celular: sem rolagem e sem GIF (economiza dados), só número, tempo,
+ * enunciado e os 4 botões. No computador o participante vê a tela do telão (PlayerGame).
  */
 export function QuestionView({
   question,
   total,
-  nickname,
   secondsLeft,
   fractionLeft,
   disabled,
   error,
-  layout,
   onAnswer,
 }: QuestionViewProps) {
-  const options = question.options.map((o) => (
-    <AnswerButton
-      key={o.id}
-      position={o.position}
-      text={o.text}
-      variant={layout}
-      disabled={disabled}
-      onClick={() => onAnswer(o.id, o.position)}
-    />
-  ));
-
-  if (layout === "web") {
-    return (
-      <main className={styles.questionWeb}>
-        <div className={styles.questionWebColumn}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
-            <div className={styles.webHeaderRow}>
-              <div className={styles.webHeaderLeft}>
-                <Pill>{progressLabel(question.position, total)}</Pill>
-                <span>{nickname}</span>
-              </div>
-              <TimerPill seconds={secondsLeft} />
-            </div>
-            <ProgressBar fraction={fractionLeft} />
-          </div>
-          <div className={styles.webMiddle}>
-            <h1 className={styles.webQuestionText}>{question.text}</h1>
-            {question.mediaUrl && <QuestionMedia src={question.mediaUrl} />}
-          </div>
-          {error && <p className={styles.inlineError}>{error}</p>}
-          <div className={styles.webOptions}>{options}</div>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className={cx(styles.screen, styles.question, styles.onPaper, styles.fixedHeight)}>
       <div className={styles.questionHeader}>
@@ -200,28 +160,20 @@ export function QuestionView({
         {question.text}
       </h1>
       {error && <p className={styles.inlineError}>{error}</p>}
-      <div className={styles.options}>{options}</div>
+      <div className={styles.options}>
+        {question.options.map((o) => (
+          <AnswerButton
+            key={o.id}
+            position={o.position}
+            text={o.text}
+            variant="phone"
+            disabled={disabled}
+            onClick={() => onAnswer(o.id, o.position)}
+          />
+        ))}
+      </div>
     </main>
   );
-}
-
-/** GIF/imagem ou vídeo em loop da pergunta (só no layout de computador). */
-function QuestionMedia({ src }: { src: string }) {
-  if (/\.(mp4|webm)$/i.test(src)) {
-    return (
-      <video
-        className={styles.webMedia}
-        src={src}
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-hidden="true"
-      />
-    );
-  }
-  // eslint-disable-next-line @next/next/no-img-element -- GIF animado: o next/image não preserva a animação
-  return <img className={styles.webMedia} src={src} alt="" />;
 }
 
 // ------------------------------------------------------------------- Resposta enviada

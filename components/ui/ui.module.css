@@ -98,30 +98,6 @@
   opacity: 0.55;
 }
 
-/* Web: grade fluida */
-.tileWeb {
-  min-height: 9.5rem;
-  border: var(--border-mobile);
-  border-radius: 28px;
-  box-shadow: 8px 8px 0 var(--tile-shadow);
-  padding: 1rem 1.75rem;
-  gap: 1.25rem;
-  font-size: 1.625rem;
-  transition:
-    transform 80ms ease,
-    box-shadow 80ms ease;
-}
-
-.tileWeb:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: 10px 10px 0 var(--tile-shadow);
-}
-
-.tileWeb:active:not(:disabled) {
-  transform: translate(4px, 4px);
-  box-shadow: 4px 4px 0 var(--tile-shadow);
-}
-
 /* Telão: pergunta aberta */
 .tileScreen {
   height: 170px;
@@ -130,6 +106,28 @@
   padding: 0 44px;
   gap: 32px;
   font-size: 46px;
+}
+
+/* Telão clicável (participante no computador) */
+button.tileScreen {
+  transition:
+    transform 100ms ease,
+    box-shadow 100ms ease,
+    opacity 120ms ease;
+}
+
+button.tileScreen:hover:not(:disabled) {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 0 var(--tile-shadow);
+}
+
+button.tileScreen:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+button.tileScreen:disabled {
+  opacity: 0.55;
 }
 
 /* Telão: resultado */

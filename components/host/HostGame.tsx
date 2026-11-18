@@ -5,14 +5,17 @@ import { useEffect, useState } from "react";
 import { useHostGame } from "@/lib/realtime/useGameState";
 import { phaseFraction, useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
 import {
-  HostIntro,
+  AnswerProgress,
+  HostIntroSkip,
   HostLeaderboard,
   HostLoading,
   HostLobby,
   HostPodium,
-  HostQuestion,
+  HostQuestionControls,
   HostRanking,
   HostResults,
+  ScreenIntro,
+  ScreenQuestion,
 } from "./HostScreens";
 import { ScreenStage } from "./ScreenStage";
 import styles from "./host.module.css";
@@ -134,26 +137,34 @@ export function HostGame({ sessionId }: { sessionId: string }) {
       break;
     case "QUESTION_INTRO":
       screen = question && (
-        <HostIntro
+        <ScreenIntro
           question={question}
           total={state.totalQuestions}
           fractionLeft={phaseFraction(remainingMs, state.phaseStartedAt, state.phaseEndsAt)}
-          busy={busy}
-          onSkip={() => void advance()}
+          barLabel="Celular na mão, vai abrir em instantes"
+          action={<HostIntroSkip busy={busy} onSkip={() => void advance()} />}
         />
       );
       break;
     case "QUESTION_OPEN":
       screen = question && (
-        <HostQuestion
+        <ScreenQuestion
           question={question}
           total={state.totalQuestions}
           secondsLeft={Math.ceil(remainingMs / 1000)}
-          answered={data.answerCount.answered}
-          players={data.answerCount.total || state.playerCount}
-          busy={busy}
-          onClose={() => void closeQuestion("manual")}
-          onFullscreen={toggleFullscreen}
+          headerRight={
+            <HostQuestionControls
+              busy={busy}
+              onClose={() => void closeQuestion("manual")}
+              onFullscreen={toggleFullscreen}
+            />
+          }
+          belowQuestion={
+            <AnswerProgress
+              answered={data.answerCount.answered}
+              players={data.answerCount.total || state.playerCount}
+            />
+          }
         />
       );
       break;

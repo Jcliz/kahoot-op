@@ -4,8 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearPlayer, loadPlayer, type StoredPlayer } from "@/lib/client/player-storage";
 import { useMediaQuery } from "@/lib/client/useMediaQuery";
+import type { OptionPosition } from "@/lib/game/types";
 import { usePlayerGame } from "@/lib/realtime/useGameState";
 import { phaseFraction, useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
+import { NicknameBadge, ScreenIntro, ScreenQuestion } from "@/components/host/HostScreens";
+import { ScreenStage } from "@/components/host/ScreenStage";
+import hostStyles from "@/components/host/host.module.css";
 import {
   AnswerSentView,
   ExitView,
@@ -35,11 +39,15 @@ export function PlayerApp() {
   return <PlayerGame player={stored} />;
 }
 
+/** Computador: janela larga e alta o bastante para o layout do telão. */
+const DESKTOP_QUERY = "(min-width: 1024px) and (min-height: 600px)";
+
 function PlayerGame({ player }: { player: StoredPlayer }) {
   const { data, fatal, pending, answerError, answer } = usePlayerGame(player.token);
   const offset = useServerClockOffset();
   const remainingMs = useRemainingMs(data?.state.phaseEndsAt ?? null, offset);
-  const wide = useMediaQuery("(min-width: 768px)");
+  // No computador, a leitura e a pergunta usam a mesma tela do telão (com o GIF).
+  const desktop = useMediaQuery(DESKTOP_QUERY);
 
   if (fatal) return <ExitView variant={fatal} onLeave={clearPlayer} />;
   if (!data) return <LoadingView message="Conectando ao jogo…" />;
@@ -54,6 +62,18 @@ function PlayerGame({ player }: { player: StoredPlayer }) {
 
     case "QUESTION_INTRO":
       if (!question) return <LoadingView message="Carregando a pergunta…" />;
+      if (desktop) {
+        return (
+          <ScreenStage>
+            <ScreenIntro
+              question={question}
+              total={total}
+              fractionLeft={phaseFraction(remainingMs, state.phaseStartedAt, state.phaseEndsAt)}
+              barLabel="Prepare-se: as alternativas aparecem em instantes"
+            />
+          </ScreenStage>
+        );
+      }
       return (
         <PrepareView
           question={question}
@@ -81,18 +101,32 @@ function PlayerGame({ player }: { player: StoredPlayer }) {
           />
         );
       }
-      const limitMs = question.timeLimitS * 1000;
+      const onAnswer = (optionId: string, position: OptionPosition) =>
+        void answer(question.id, optionId, position);
+      if (desktop) {
+        return (
+          <ScreenStage>
+            <ScreenQuestion
+              question={question}
+              total={total}
+              secondsLeft={Math.ceil(remainingMs / 1000)}
+              headerRight={<NicknameBadge nickname={me.nickname} />}
+              belowQuestion={answerError && <p className={hostStyles.answerError}>{answerError}</p>}
+              onAnswer={onAnswer}
+              answersDisabled={remainingMs <= 0}
+            />
+          </ScreenStage>
+        );
+      }
       return (
         <QuestionView
           question={question}
           total={total}
-          nickname={me.nickname}
           secondsLeft={Math.ceil(remainingMs / 1000)}
-          fractionLeft={remainingMs / limitMs}
+          fractionLeft={remainingMs / (question.timeLimitS * 1000)}
           disabled={remainingMs <= 0}
           error={answerError}
-          layout={wide ? "web" : "phone"}
-          onAnswer={(optionId, position) => void answer(question.id, optionId, position)}
+          onAnswer={onAnswer}
         />
       );
     }

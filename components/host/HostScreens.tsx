@@ -1,7 +1,9 @@
 /**
- * Telas do telão (1920×1080). Recebem tudo por props; HostGame decide qual mostrar.
+ * Telas no formato telão (1920×1080). Recebem tudo por props.
+ * ScreenIntro e ScreenQuestion também são usadas pelo participante no computador.
  */
-import { AnswerTile, cx, Deco, ShapeRow } from "@/components/ui";
+import type { ReactNode } from "react";
+import { AnswerButton, AnswerTile, cx, Deco, ShapeRow } from "@/components/ui";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -13,7 +15,13 @@ import {
 } from "@/components/ui/Icons";
 import { formatPoints, ordinal } from "@/lib/client/format";
 import { formatPin } from "@/lib/game/pin";
-import type { LobbyPlayer, PublicQuestion, QuestionResults, RankEntry } from "@/lib/game/types";
+import type {
+  LobbyPlayer,
+  OptionPosition,
+  PublicQuestion,
+  QuestionResults,
+  RankEntry,
+} from "@/lib/game/types";
 import { QrCode } from "./QrCode";
 import styles from "./host.module.css";
 
@@ -119,20 +127,21 @@ export function HostLobby({
   );
 }
 
-// ------------------------------------------------------------------- Abertura
+// ------------------------------------------------------------------- Abertura (tempo de leitura)
 
-export function HostIntro({
+export function ScreenIntro({
   question,
   total,
   fractionLeft,
-  busy,
-  onSkip,
+  barLabel,
+  action,
 }: {
   question: PublicQuestion;
   total: number;
   fractionLeft: number;
-  busy: boolean;
-  onSkip: () => void;
+  barLabel: string;
+  /** Ação no canto (telão: "Abrir agora"). */
+  action?: ReactNode;
 }) {
   return (
     <div className={cx(styles.screen, styles.onBrand, styles.intro)}>
@@ -178,7 +187,7 @@ export function HostIntro({
           {question.text}
         </h1>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <span className={styles.introBarLabel}>Celular na mão, vai abrir em instantes</span>
+          <span className={styles.introBarLabel}>{barLabel}</span>
           <div className={styles.introBar} aria-hidden="true">
             <div
               className={styles.introBarFill}
@@ -187,40 +196,43 @@ export function HostIntro({
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        className={cx(styles.btnSecondaryOnBrand, styles.introSkip)}
-        onClick={onSkip}
-        disabled={busy}
-      >
-        Abrir agora
-      </button>
+      {action && <div className={styles.introSkip}>{action}</div>}
     </div>
+  );
+}
+
+export function HostIntroSkip({ busy, onSkip }: { busy: boolean; onSkip: () => void }) {
+  return (
+    <button type="button" className={styles.btnSecondaryOnBrand} onClick={onSkip} disabled={busy}>
+      Abrir agora
+    </button>
   );
 }
 
 // ------------------------------------------------------------------- Pergunta aberta
 
-export function HostQuestion({
-  question,
-  total,
-  secondsLeft,
-  answered,
-  players,
-  busy,
-  onClose,
-  onFullscreen,
-}: {
+interface ScreenQuestionProps {
   question: PublicQuestion;
   total: number;
   secondsLeft: number;
-  answered: number;
-  players: number;
-  busy: boolean;
-  onClose: () => void;
-  onFullscreen: () => void;
-}) {
-  const fraction = players > 0 ? Math.min(answered / players, 1) : 0;
+  /** Lado direito do cabeçalho (telão: Finalizar pergunta e tela cheia; jogador: apelido). */
+  headerRight: ReactNode;
+  /** Abaixo do enunciado (telão: quantos já responderam). */
+  belowQuestion?: ReactNode;
+  /** Com esta função as alternativas viram botões (participante no computador). */
+  onAnswer?: (optionId: string, position: OptionPosition) => void;
+  answersDisabled?: boolean;
+}
+
+export function ScreenQuestion({
+  question,
+  total,
+  secondsLeft,
+  headerRight,
+  belowQuestion,
+  onAnswer,
+  answersDisabled = false,
+}: ScreenQuestionProps) {
   return (
     <div className={cx(styles.screen, styles.onInk, styles.questionScreen)}>
       <header className={styles.header}>
@@ -228,12 +240,7 @@ export function HostQuestion({
           <span className={styles.counterPill}>{progressLabel(question.position, total)}</span>
           <span className={styles.headerNote}>{TITLE}</span>
         </div>
-        <div className={styles.controls}>
-          <button type="button" className={styles.btnSecondary} onClick={onClose} disabled={busy}>
-            Finalizar pergunta
-          </button>
-          <FullscreenButton onClick={onFullscreen} />
-        </div>
+        {headerRight}
       </header>
 
       <div className={styles.questionMiddle}>
@@ -246,14 +253,7 @@ export function HostQuestion({
           >
             {question.text}
           </h1>
-          <div className={styles.answerProgress} aria-live="polite">
-            <div className={styles.answerTrack} aria-hidden="true">
-              <div className={styles.answerFill} style={{ width: `${fraction * 100}%` }} />
-            </div>
-            <span>
-              <span className={styles.highlight}>{answered}</span> de {players} responderam
-            </span>
-          </div>
+          {belowQuestion}
         </div>
         {question.mediaUrl && <QuestionMedia src={question.mediaUrl} />}
         <div className={styles.timerCircle} data-urgent={secondsLeft <= 5} role="timer">
@@ -263,12 +263,63 @@ export function HostQuestion({
       </div>
 
       <div className={styles.optionsGrid}>
-        {question.options.map((o) => (
-          <AnswerTile key={o.id} position={o.position} text={o.text} variant="screen" />
-        ))}
+        {question.options.map((o) =>
+          onAnswer ? (
+            <AnswerButton
+              key={o.id}
+              position={o.position}
+              text={o.text}
+              variant="screen"
+              disabled={answersDisabled}
+              onClick={() => onAnswer(o.id, o.position)}
+            />
+          ) : (
+            <AnswerTile key={o.id} position={o.position} text={o.text} variant="screen" />
+          ),
+        )}
       </div>
     </div>
   );
+}
+
+/** Controles do apresentador no cabeçalho da pergunta. */
+export function HostQuestionControls({
+  busy,
+  onClose,
+  onFullscreen,
+}: {
+  busy: boolean;
+  onClose: () => void;
+  onFullscreen: () => void;
+}) {
+  return (
+    <div className={styles.controls}>
+      <button type="button" className={styles.btnSecondary} onClick={onClose} disabled={busy}>
+        Finalizar pergunta
+      </button>
+      <FullscreenButton onClick={onFullscreen} />
+    </div>
+  );
+}
+
+/** Quantos já responderam (só no telão). */
+export function AnswerProgress({ answered, players }: { answered: number; players: number }) {
+  const fraction = players > 0 ? Math.min(answered / players, 1) : 0;
+  return (
+    <div className={styles.answerProgress} aria-live="polite">
+      <div className={styles.answerTrack} aria-hidden="true">
+        <div className={styles.answerFill} style={{ width: `${fraction * 100}%` }} />
+      </div>
+      <span>
+        <span className={styles.highlight}>{answered}</span> de {players} responderam
+      </span>
+    </div>
+  );
+}
+
+/** Apelido do participante no cabeçalho (no lugar dos controles do apresentador). */
+export function NicknameBadge({ nickname }: { nickname: string }) {
+  return <span className={styles.nicknameBadge}>{nickname}</span>;
 }
 
 /** GIF/imagem em public/media, ou vídeo (MP4/WebM em loop, bem mais leve que GIF). */

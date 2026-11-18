@@ -28,16 +28,15 @@ export function Pill({
 
 // ------------------------------------------------------------------- Alternativas
 
-type TileVariant = "phone" | "web" | "screen" | "result";
+type TileVariant = "phone" | "screen" | "result";
 
 const TILE_VARIANT: Record<TileVariant, string> = {
   phone: styles.tilePhone,
-  web: styles.tileWeb,
   screen: styles.tileScreen,
   result: styles.tileResult,
 };
 
-const TILE_SHAPE_SIZE: Record<TileVariant, number> = { phone: 40, web: 56, screen: 84, result: 60 };
+const TILE_SHAPE_SIZE: Record<TileVariant, number> = { phone: 40, screen: 84, result: 60 };
 
 interface AnswerTileProps {
   position: OptionPosition;
@@ -66,14 +65,14 @@ export function AnswerTile({ position, text, variant, correct }: AnswerTileProps
   );
 }
 
-/** Versão clicável (celular e web). */
+/** Versão clicável: celular, ou formato telão para quem joga no computador. */
 export function AnswerButton({
   position,
   text,
   variant,
   ...buttonProps
 }: Omit<AnswerTileProps, "correct" | "variant"> & {
-  variant: "phone" | "web";
+  variant: "phone" | "screen";
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
