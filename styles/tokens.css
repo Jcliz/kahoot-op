@@ -1,0 +1,49 @@
+/* Quiz ao vivo – Programa Periódico de Qualidade
+   Tokens de design. O código usa só estes tokens, nunca hex solto nos componentes. */
+:root {
+  /* Cores base */
+  --color-brand: #ffd60a; /* amarelo principal (PROVISÓRIO: trocar pelo hex oficial da ObraPrima) */
+  --color-brand-soft: #ffe78a; /* amarelo claro: 4ª alternativa, 3º lugar do pódio, decoração */
+  --color-ink: #111111; /* preto: fundo do telão, textos, contornos */
+  --color-paper: #ffffff; /* branco: fundo do celular, cartões, textos sobre preto */
+  --color-danger: #d9201a; /* único tom fora da paleta: "Errou" e mensagens de erro */
+
+  /* Cinzas */
+  --color-muted: #4a4a4a; /* texto secundário sobre branco ou amarelo */
+  --color-muted-on-ink: #c4c4c4; /* texto secundário sobre preto; alternativas erradas no resultado */
+  --color-surface-on-ink: #2a2a2a; /* cartão de alternativa errada no resultado (telão) */
+  --color-track-on-ink: #3a3a3a; /* trilho da barra de progresso sobre preto */
+  --color-bar-muted: #555555; /* barras das alternativas erradas no gráfico */
+
+  /* Alternativas: posição 0 a 3 = triângulo, losango, círculo, quadrado */
+  --answer-0-bg: var(--color-brand);
+  --answer-0-fg: var(--color-ink);
+  --answer-0-shape: var(--color-ink);
+  --answer-1-bg: var(--color-ink);
+  --answer-1-fg: var(--color-paper);
+  --answer-1-shape: var(--color-brand);
+  --answer-2-bg: var(--color-paper);
+  --answer-2-fg: var(--color-ink);
+  --answer-2-shape: var(--color-ink);
+  --answer-3-bg: var(--color-brand-soft);
+  --answer-3-fg: var(--color-ink);
+  --answer-3-shape: var(--color-ink);
+
+  /* Tipografia: as famílias vêm do next/font (app/layout.tsx) */
+  --font-display:
+    var(--font-bricolage), "Arial Black", sans-serif; /* títulos e números, peso 800 */
+  --font-body: var(--font-dm-sans), system-ui, sans-serif; /* textos, pesos 500 e 700 */
+
+  /* Forma: contorno grosso + sombra "dura" (sem desfoque) */
+  --border-mobile: 4px solid var(--color-ink);
+  --border-screen: 6px solid var(--color-ink);
+  --radius-pill: 999px;
+  --radius-mobile-control: 20px; /* botões e campos no celular */
+  --radius-mobile-card: 28px;
+  --radius-screen-control: 22px; /* botões secundários no telão */
+  --radius-screen-card: 32px;
+  --shadow-mobile: 6px 6px 0 var(--color-ink);
+  --shadow-mobile-card: 8px 8px 0 var(--color-ink);
+  --shadow-screen: 10px 10px 0 var(--color-ink);
+  --shadow-on-ink: 10px 10px 0 var(--color-paper); /* mesma sombra sobre fundo preto */
+}
