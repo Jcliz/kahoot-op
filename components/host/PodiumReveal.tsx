@@ -13,11 +13,11 @@ import styles from "./podium.module.css";
  * 3º lugar → 2º lugar → tambores e holofotes procurando o 1º → 1º com confetes.
  */
 const TIMELINE = {
-  third: 900,
-  second: 3_000,
-  drumroll: 5_200,
-  first: 10_200,
-  rankingButton: 12_200,
+  third: 400,
+  second: 2_000,
+  drumroll: 3_600,
+  first: 8_600,
+  rankingButton: 10_600,
 } as const;
 
 /** Duração dos tambores = a dos holofotes no CSS (5 s). */

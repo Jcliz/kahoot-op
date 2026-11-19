@@ -329,28 +329,38 @@
   mix-blend-mode: screen;
 }
 
-/* Cada holofote varre o palco e, aos poucos, converge para o bloco do 1º lugar. */
+/* Posição final: os três apontam para o bloco do 1º lugar. */
 .spot[data-spot="left"] {
   left: 28%;
   transform: rotate(-30deg);
-  animation: search-left 5s cubic-bezier(0.45, 0, 0.3, 1) both;
 }
 
 .spot[data-spot="center"] {
   left: 50%;
   transform: rotate(0deg);
-  animation: search-center 5s cubic-bezier(0.45, 0, 0.3, 1) both;
 }
 
 .spot[data-spot="right"] {
   left: 72%;
   transform: rotate(30deg);
-  animation: search-right 5s cubic-bezier(0.45, 0, 0.3, 1) both;
 }
 
-/* Depois da revelação ficam parados em cima do vencedor */
-.podium[data-step="first"] .spot {
-  animation: none;
+/*
+ * A busca só começa quando os tambores começam. Antes ela rodava desde a abertura
+ * do pódio, com os holofotes ainda invisíveis, e já tinha terminado quando eles
+ * apareciam: ficavam parados. Cada um varre o palco e converge para o 1º lugar
+ * (5 s = duração dos tambores no componente).
+ */
+.podium[data-step="drumroll"] .spot[data-spot="left"] {
+  animation: search-left 5s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+.podium[data-step="drumroll"] .spot[data-spot="center"] {
+  animation: search-center 5s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+.podium[data-step="drumroll"] .spot[data-spot="right"] {
+  animation: search-right 5s cubic-bezier(0.45, 0, 0.3, 1) both;
 }
 
 @keyframes search-left {
