@@ -5,7 +5,13 @@ import { useEffect, useState, type FormEvent } from "react";
 import { AlertIcon, ArrowRightIcon } from "@/components/ui/Icons";
 import { cx, Deco, PhoneButton, ShapeRow } from "@/components/ui";
 import { ApiRequestError, postJson } from "@/lib/client/api";
-import { loadPlayer, savePlayer } from "@/lib/client/player-storage";
+import {
+  checkStoredGame,
+  clearPlayer,
+  loadPlayer,
+  savePlayer,
+  type StoredPlayer,
+} from "@/lib/client/player-storage";
 import { NICKNAME_MAX, NICKNAME_MIN } from "@/lib/game/nickname";
 import { normalizePinInput, PIN_LENGTH } from "@/lib/game/pin";
 import type { JoinResponse } from "@/lib/game/types";
@@ -18,13 +24,23 @@ export function JoinForm({ initialPin }: { initialPin: string }) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Quem já entrou nesta sessão (ou não veio por um QR novo) volta direto para o jogo.
+  // Nada de voltar sozinho para um jogo salvo: só quando o PIN digitado é o
+  // daquela entrada e o jogo ainda está rolando, oferece voltar com o mesmo apelido.
+  const [resumable, setResumable] = useState<StoredPlayer | null>(null);
   useEffect(() => {
     const stored = loadPlayer();
-    if (stored && (!initialPin || normalizePinInput(initialPin) === stored.pin)) {
-      router.replace("/play");
-    }
-  }, [initialPin, router]);
+    if (!stored || pin.length !== PIN_LENGTH || pin !== stored.pin) return;
+    let cancelled = false;
+    void checkStoredGame(stored).then((status) => {
+      if (cancelled) return;
+      if (status === "active") setResumable(stored);
+      else if (status === "over") clearPlayer();
+    });
+    return () => {
+      cancelled = true;
+      setResumable(null);
+    };
+  }, [pin]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,6 +90,18 @@ export function JoinForm({ initialPin }: { initialPin: string }) {
             <div className={styles.errorBox} role="alert">
               <AlertIcon size={22} />
               <span>{error}</span>
+            </div>
+          )}
+          {resumable && (
+            <div className={styles.resumeBox}>
+              <span>
+                Você já está nesse jogo como <strong>{resumable.nickname}</strong>.
+              </span>
+              <PhoneButton type="button" onClick={() => router.push("/play")}>
+                Voltar ao jogo
+                <ArrowRightIcon size={26} />
+              </PhoneButton>
+              <span className={styles.hint}>Ou entre com outro apelido abaixo.</span>
             </div>
           )}
           <div className={styles.field}>

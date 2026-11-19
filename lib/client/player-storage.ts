@@ -3,6 +3,10 @@
  * voltar ao jogo (tela bloqueada, aba recarregada, rede caída) sem digitar de novo.
  */
 
+import { isGameOver } from "@/lib/game/status";
+import type { PlayerStateResponse } from "@/lib/game/types";
+import { ApiRequestError, apiFetch, bearer } from "./api";
+
 const KEY = "quiz.player.v1";
 
 export interface StoredPlayer {
@@ -44,5 +48,26 @@ export function clearPlayer() {
     window.localStorage.removeItem(KEY);
   } catch {
     // ignore
+  }
+}
+
+/**
+ * Pergunta ao servidor se a entrada salva ainda vale.
+ * - "active": o jogo segue e o participante continua nele.
+ * - "over": jogo encerrado, participante removido ou sessão inexistente.
+ * - "unknown": sem resposta (rede); quem chama decide.
+ */
+export async function checkStoredGame(
+  player: StoredPlayer,
+): Promise<"active" | "over" | "unknown"> {
+  try {
+    const { state } = await apiFetch<PlayerStateResponse>("/api/state", {
+      headers: bearer(player.token),
+    });
+    return isGameOver(state) ? "over" : "active";
+  } catch (error) {
+    // 401 entrada expirada, 403 removido, 404 sessão apagada
+    if (error instanceof ApiRequestError && [401, 403, 404].includes(error.status)) return "over";
+    return "unknown";
   }
 }

@@ -2,7 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clearPlayer, loadPlayer, type StoredPlayer } from "@/lib/client/player-storage";
+import {
+  checkStoredGame,
+  clearPlayer,
+  loadPlayer,
+  type StoredPlayer,
+} from "@/lib/client/player-storage";
 import { useMediaQuery } from "@/lib/client/useMediaQuery";
 import type { OptionPosition } from "@/lib/game/types";
 import { usePlayerGame } from "@/lib/realtime/useGameState";
@@ -23,16 +28,35 @@ import {
   StandingView,
 } from "./PlayerScreens";
 
-/** Lê o token do localStorage; sem ele, volta para a entrada. */
+/**
+ * Lê o token do localStorage; sem ele, ou se aquele jogo já acabou, volta para a
+ * entrada. Recarregar no meio do jogo continua funcionando; abrir /play dias
+ * depois não puxa mais o pódio de uma sessão antiga.
+ */
 export function PlayerApp() {
   const router = useRouter();
-  const [stored, setStored] = useState<StoredPlayer | null | undefined>(undefined);
+  const [stored, setStored] = useState<StoredPlayer | null>(null);
 
   useEffect(() => {
     const player = loadPlayer();
-    if (!player) router.replace("/");
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- leitura única do localStorage (só existe no navegador)
-    setStored(player);
+    if (!player) {
+      router.replace("/");
+      return;
+    }
+    let cancelled = false;
+    void checkStoredGame(player).then((status) => {
+      if (cancelled) return;
+      if (status === "over") {
+        clearPlayer();
+        router.replace("/");
+        return;
+      }
+      // "unknown" (sem rede): segue para o jogo, que reconecta sozinho
+      setStored(player);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   if (!stored) return <LoadingView message="Conectando ao jogo…" />;

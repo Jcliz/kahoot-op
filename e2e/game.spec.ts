@@ -125,3 +125,22 @@ test("apelido repetido e PIN errado mostram a mensagem do design", async ({ brow
   await phone.getByRole("button", { name: "Entrar" }).click();
   await expect(phone.getByText(/PIN não encontrado/)).toBeVisible();
 });
+
+test("entrada não puxa o jogo salvo sozinha; com o PIN dele, oferece voltar", async ({
+  browser,
+}) => {
+  const { pin } = await createSession(browser);
+  const phone = await joinPhone(browser, pin, "Retorno");
+
+  // Abrir a entrada de novo mostra o formulário vazio, sem redirecionar.
+  await open(phone, "/");
+  await expect(phone.getByLabel("PIN do jogo")).toHaveValue("");
+  await expect(phone.getByRole("button", { name: "Voltar ao jogo" })).toHaveCount(0);
+
+  // Com o PIN daquele jogo, ainda ativo, oferece voltar com o mesmo apelido.
+  await phone.getByLabel("PIN do jogo").fill(pin);
+  await expect(phone.getByText("Você já está nesse jogo como")).toBeVisible();
+  await phone.getByRole("button", { name: "Voltar ao jogo" }).click();
+  await expect(phone.getByText("Você entrou")).toBeVisible();
+  await expect(phone.getByText("Retorno")).toBeVisible();
+});
