@@ -13,6 +13,7 @@ import type { OptionPosition } from "@/lib/game/types";
 import { usePlayerGame } from "@/lib/realtime/useGameState";
 import { phaseFraction, useRemainingMs, useServerClockOffset } from "@/lib/realtime/useServerClock";
 import { NicknameBadge, ScreenIntro, ScreenQuestion } from "@/components/host/HostScreens";
+import { PodiumReveal } from "@/components/host/PodiumReveal";
 import { ScreenStage } from "@/components/host/ScreenStage";
 import hostStyles from "@/components/host/host.module.css";
 import {
@@ -72,6 +73,8 @@ function PlayerGame({ player }: { player: StoredPlayer }) {
   const remainingMs = useRemainingMs(data?.state.phaseEndsAt ?? null, offset);
   // No computador, a leitura e a pergunta usam a mesma tela do telão (com o GIF).
   const desktop = useMediaQuery(DESKTOP_QUERY);
+  // Depois da revelação do pódio, o participante passa para o próprio resultado.
+  const [podiumSeen, setPodiumSeen] = useState(false);
 
   if (fatal) return <ExitView variant={fatal} onLeave={clearPlayer} />;
   if (!data) return <LoadingView message="Conectando ao jogo…" />;
@@ -191,6 +194,20 @@ function PlayerGame({ player }: { player: StoredPlayer }) {
 
     case "PODIUM":
     case "FINISHED":
+      // Mesma revelação do telão, sincronizada; depois, o resultado de cada um.
+      if (state.status === "PODIUM" && !podiumSeen && state.podium?.length) {
+        const reveal = (
+          <PodiumReveal
+            podium={state.podium}
+            startedAt={state.phaseStartedAt}
+            offset={offset}
+            layout={desktop ? "screen" : "phone"}
+            highlightPlayerId={me.playerId}
+            action={{ label: "Meu resultado", onClick: () => setPodiumSeen(true) }}
+          />
+        );
+        return desktop ? <ScreenStage>{reveal}</ScreenStage> : reveal;
+      }
       if (me.rank === 0) return <LoadingView message="Calculando o resultado final…" />;
       if (me.rank <= 3) {
         return (

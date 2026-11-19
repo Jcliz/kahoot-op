@@ -179,8 +179,9 @@ export function HostGame({ sessionId }: { sessionId: string }) {
         <PodiumReveal
           key={versionKey}
           podium={state.podium ?? []}
-          busy={busy}
-          onShowRanking={() => void advance()}
+          startedAt={state.phaseStartedAt}
+          offset={offset}
+          action={{ label: "Ver ranking completo", onClick: () => void advance(), busy }}
         />
       );
       break;

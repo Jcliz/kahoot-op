@@ -128,19 +128,30 @@ export class PodiumSound {
   }
 }
 
-const SOUND_KEY = "quiz.podiumSound";
+/**
+ * "screen": telão, som ligado por padrão.
+ * "phone": celulares começam mudos; dezenas de rufares fora de compasso na
+ * mesma sala atrapalham o do telão. Quem quiser liga no botão.
+ */
+export type SoundScope = "screen" | "phone";
 
-export function loadSoundPreference(): boolean {
+const SOUND_KEYS: Record<SoundScope, string> = {
+  screen: "quiz.podiumSound",
+  phone: "quiz.podiumSound.phone",
+};
+
+export function loadSoundPreference(scope: SoundScope): boolean {
   try {
-    return window.localStorage.getItem(SOUND_KEY) !== "off";
+    const saved = window.localStorage.getItem(SOUND_KEYS[scope]);
+    return saved ? saved === "on" : scope === "screen";
   } catch {
-    return true;
+    return scope === "screen";
   }
 }
 
-export function saveSoundPreference(on: boolean) {
+export function saveSoundPreference(scope: SoundScope, on: boolean) {
   try {
-    window.localStorage.setItem(SOUND_KEY, on ? "on" : "off");
+    window.localStorage.setItem(SOUND_KEYS[scope], on ? "on" : "off");
   } catch {
     // sem storage: vale só nesta tela
   }

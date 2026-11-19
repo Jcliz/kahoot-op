@@ -608,3 +608,145 @@
     transform: rotateX(70deg) scaleX(0.6);
   }
 }
+
+/* ---------------------------------------------------------------- "Você" (celular do participante) */
+.you {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: var(--color-brand);
+  color: var(--color-ink);
+  font-size: 28px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ---------------------------------------------------------------- Celular (tela cheia, 360 px+) */
+.podium[data-layout="phone"] {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  padding: 20px 12px 0;
+}
+
+.podium[data-layout="phone"] .header {
+  height: 56px;
+  gap: 10px;
+}
+
+.podium[data-layout="phone"] .title {
+  font-size: 44px;
+  letter-spacing: -1px;
+}
+
+.podium[data-layout="phone"] .controls {
+  gap: 8px;
+}
+
+.podium[data-layout="phone"] .button {
+  height: 44px;
+  padding: 0 16px;
+  border-width: 2px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+.podium[data-layout="phone"] .iconButton {
+  width: 44px;
+  padding: 0;
+}
+
+.podium[data-layout="phone"] .stage {
+  gap: 6px;
+}
+
+.podium[data-layout="phone"] .column {
+  width: 31%;
+  gap: 10px;
+}
+
+.podium[data-layout="phone"] .column[data-place="1"] {
+  width: 36%;
+}
+
+.podium[data-layout="phone"] .who {
+  gap: 6px;
+}
+
+.podium[data-layout="phone"] .name {
+  font-size: 17px;
+}
+
+.podium[data-layout="phone"] .points {
+  font-size: 14px;
+}
+
+.podium[data-layout="phone"] .you {
+  padding: 3px 10px;
+  font-size: 12px;
+}
+
+.podium[data-layout="phone"] .block {
+  border-radius: 18px 18px 0 0;
+  padding-top: 12px;
+}
+
+.podium[data-layout="phone"] .block[data-place="1"] {
+  height: 230px;
+  font-size: 96px;
+}
+
+.podium[data-layout="phone"] .block[data-place="2"] {
+  height: 170px;
+  font-size: 72px;
+}
+
+.podium[data-layout="phone"] .block[data-place="3"] {
+  height: 125px;
+  font-size: 58px;
+}
+
+/* No celular a coluna é estreita: o nome do vencedor pode quebrar. */
+.podium[data-layout="phone"] .winner .name {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.podium[data-layout="phone"] .winner .points {
+  font-size: 16px;
+}
+
+.podium[data-layout="phone"] .drumText {
+  font-size: 20px;
+}
+
+.podium[data-layout="phone"] .mystery {
+  font-size: 72px;
+}
+
+.podium[data-layout="phone"] .drum {
+  width: 96px;
+  height: 80px;
+}
+
+.podium[data-layout="phone"] .spot {
+  top: -30px;
+  width: 220px;
+  height: 1100px;
+  margin-left: -110px;
+}
+
+.podium[data-layout="phone"] .floorGlow {
+  bottom: -90px;
+  width: 380px;
+  height: 220px;
+  margin-left: -190px;
+}
+
+.podium[data-layout="phone"][data-step="first"] .block[data-place="1"] {
+  box-shadow:
+    0 0 0 3px var(--color-paper),
+    0 0 50px 12px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}

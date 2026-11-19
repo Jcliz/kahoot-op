@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { cx, Shape } from "@/components/ui";
 import { CrownIcon, SoundOffIcon, SoundOnIcon } from "@/components/ui/Icons";
 import { formatPoints, ordinal } from "@/lib/client/format";
-import { loadSoundPreference, PodiumSound, saveSoundPreference } from "@/lib/client/podium-sound";
+import {
+  loadSoundPreference,
+  PodiumSound,
+  saveSoundPreference,
+  type SoundScope,
+} from "@/lib/client/podium-sound";
 import type { OptionPosition, RankEntry } from "@/lib/game/types";
 import styles from "./podium.module.css";
 
 /**
- * Linha do tempo da revelação (ms desde que o pódio abriu):
+ * Linha do tempo da revelação (ms desde que o pódio abriu no servidor):
  * 3º lugar → 2º lugar → tambores e holofotes procurando o 1º → 1º com confetes.
  */
 const TIMELINE = {
@@ -17,48 +22,94 @@ const TIMELINE = {
   second: 2_000,
   drumroll: 3_600,
   first: 8_600,
-  rankingButton: 10_600,
+  action: 10_600,
+  /** Depois disso os confetes já caíram: não monta mais a chuva. */
+  confettiEnd: 18_600,
 } as const;
 
-/** Duração dos tambores = a dos holofotes no CSS (5 s). */
-const DRUMROLL_MS = TIMELINE.first - TIMELINE.drumroll;
+const CUES = [
+  TIMELINE.third,
+  TIMELINE.second,
+  TIMELINE.drumroll,
+  TIMELINE.first,
+  TIMELINE.action,
+  TIMELINE.confettiEnd,
+];
 
 type Step = "waiting" | "third" | "second" | "drumroll" | "first";
 const STEP_ORDER: Step[] = ["waiting", "third", "second", "drumroll", "first"];
 const reached = (step: Step, target: Step) =>
   STEP_ORDER.indexOf(step) >= STEP_ORDER.indexOf(target);
 
+export type PodiumLayout = "screen" | "phone";
+
 interface PodiumRevealProps {
   podium: RankEntry[];
-  busy: boolean;
-  onShowRanking: () => void;
+  /** Quando o pódio abriu, no relógio do servidor: sincroniza telão e celulares. */
+  startedAt: number | null;
+  /** Diferença servidor − aparelho (useServerClockOffset). */
+  offset: number;
+  /** "screen": telão 1920×1080 (dentro do ScreenStage). "phone": tela cheia do celular. */
+  layout?: PodiumLayout;
+  /** Destaca o próprio participante, se ele estiver no pódio. */
+  highlightPlayerId?: string;
+  /** Botão que aparece no fim da revelação. */
+  action: { label: string; onClick: () => void; busy?: boolean };
 }
 
-export function PodiumReveal({ podium, busy, onShowRanking }: PodiumRevealProps) {
-  const [step, setStep] = useState<Step>("waiting");
-  const [showRanking, setShowRanking] = useState(false);
-  const [soundOn, setSoundOn] = useState(loadSoundPreference);
+/**
+ * Quantas marcas da linha do tempo já passaram. Conta a partir do início no
+ * servidor (todos os aparelhos juntos; quem recarrega retoma do ponto certo),
+ * mas nunca espera um início "no futuro" por causa de relógio adiantado.
+ */
+function useCuesReached(startedAt: number | null, offset: number): [number, number] {
+  const [mountedAt] = useState(() => Date.now());
+  const start = startedAt === null ? mountedAt : Math.min(startedAt - offset, mountedAt);
+  const [count, setCount] = useState(() => CUES.filter((at) => mountedAt - start >= at).length);
+
+  useEffect(() => {
+    const timers = CUES.map((at, i) =>
+      window.setTimeout(
+        // só avança: um ajuste do relógio não faz a animação voltar
+        () => setCount((c) => Math.max(c, i + 1)),
+        Math.max(start + at - Date.now(), 0),
+      ),
+    );
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [start]);
+
+  return [count, start];
+}
+
+export function PodiumReveal({
+  podium,
+  startedAt,
+  offset,
+  layout = "screen",
+  highlightPlayerId,
+  action,
+}: PodiumRevealProps) {
+  const [cues, start] = useCuesReached(startedAt, offset);
+  const step: Step = STEP_ORDER[Math.min(cues, STEP_ORDER.length - 1)];
+  const showAction = cues >= 5;
+  const showConfetti = step === "first" && cues < 6;
+
+  const phone = layout === "phone";
+  const scope: SoundScope = phone ? "phone" : "screen";
+  const [soundOn, setSoundOn] = useState(() => loadSoundPreference(scope));
   const soundRef = useRef<PodiumSound | null>(null);
 
-  // Avança a sequência no tempo.
-  useEffect(() => {
-    const timers = [
-      window.setTimeout(() => setStep("third"), TIMELINE.third),
-      window.setTimeout(() => setStep("second"), TIMELINE.second),
-      window.setTimeout(() => setStep("drumroll"), TIMELINE.drumroll),
-      window.setTimeout(() => setStep("first"), TIMELINE.first),
-      window.setTimeout(() => setShowRanking(true), TIMELINE.rankingButton),
-    ];
-    return () => timers.forEach((t) => window.clearTimeout(t));
-  }, []);
-
-  // Som: rufar durante a procura e prato na revelação.
+  // Som: rufar durante a procura e prato na revelação (não toca o que já passou).
   useEffect(() => {
     if (!soundOn) return;
     soundRef.current ??= new PodiumSound();
-    if (step === "drumroll") soundRef.current.drumroll(DRUMROLL_MS);
-    if (step === "first") soundRef.current.finale();
-  }, [step, soundOn]);
+    const now = Date.now();
+    if (step === "drumroll") {
+      const left = start + TIMELINE.first - now;
+      if (left > 400) soundRef.current.drumroll(left);
+    }
+    if (step === "first" && now - (start + TIMELINE.first) < 1_500) soundRef.current.finale();
+  }, [step, soundOn, start]);
 
   // Para o som ao sair da tela.
   useEffect(() => () => soundRef.current?.stop(), []);
@@ -69,16 +120,17 @@ export function PodiumReveal({ podium, busy, onShowRanking }: PodiumRevealProps)
       soundRef.current?.stop();
       soundRef.current = null;
     }
-    saveSoundPreference(next);
+    saveSoundPreference(scope, next);
     setSoundOn(next);
   }
 
   const byPlace = (place: number) => podium.find((e) => e.rank === place);
   const columns = [2, 1, 3].filter((place) => byPlace(place));
   const revealedAt: Record<number, Step> = { 3: "third", 2: "second", 1: "first" };
+  const iconSize = phone ? 22 : 36;
 
   return (
-    <div className={styles.podium} data-step={step}>
+    <div className={styles.podium} data-step={step} data-layout={layout}>
       <div className={styles.dim} aria-hidden="true" />
       <div className={styles.floorGlow} aria-hidden="true" />
       <div className={styles.spotlights} aria-hidden="true">
@@ -97,11 +149,16 @@ export function PodiumReveal({ podium, busy, onShowRanking }: PodiumRevealProps)
             aria-label={soundOn ? "Desligar o som" : "Ligar o som"}
             aria-pressed={soundOn}
           >
-            {soundOn ? <SoundOnIcon size={36} /> : <SoundOffIcon size={36} />}
+            {soundOn ? <SoundOnIcon size={iconSize} /> : <SoundOffIcon size={iconSize} />}
           </button>
-          {showRanking && (
-            <button type="button" className={styles.button} onClick={onShowRanking} disabled={busy}>
-              Ver ranking completo
+          {showAction && (
+            <button
+              type="button"
+              className={styles.button}
+              onClick={action.onClick}
+              disabled={action.busy}
+            >
+              {action.label}
             </button>
           )}
         </div>
@@ -112,6 +169,9 @@ export function PodiumReveal({ podium, busy, onShowRanking }: PodiumRevealProps)
           const entry = byPlace(place)!;
           const revealed = reached(step, revealedAt[place]);
           const searching = place === 1 && step === "drumroll";
+          const you = entry.playerId === highlightPlayerId && (
+            <span className={styles.you}>Você</span>
+          );
           return (
             <div key={place} className={styles.column} data-place={place}>
               {searching ? (
@@ -122,24 +182,26 @@ export function PodiumReveal({ podium, busy, onShowRanking }: PodiumRevealProps)
                   aria-hidden={!revealed}
                 >
                   <span className={styles.crown}>
-                    <CrownIcon width={130} />
+                    <CrownIcon width={phone ? 64 : 130} />
                   </span>
                   <span
                     className={styles.name}
                     style={
                       {
-                        "--winner-size": `${winnerFontSize(entry.nickname)}px`,
+                        "--winner-size": `${winnerFontSize(entry.nickname, layout)}px`,
                       } as React.CSSProperties
                     }
                   >
                     {entry.nickname}
                   </span>
                   <span className={styles.points}>{formatPoints(entry.score)} pontos</span>
+                  {you}
                 </div>
               ) : (
                 <div className={cx(styles.who, !revealed && styles.hidden)} aria-hidden={!revealed}>
                   <span className={styles.name}>{entry.nickname}</span>
                   <span className={styles.points}>{formatPoints(entry.score)} pontos</span>
+                  {you}
                 </div>
               )}
               <div className={styles.block} data-place={place}>
@@ -150,14 +212,20 @@ export function PodiumReveal({ podium, busy, onShowRanking }: PodiumRevealProps)
         })}
       </div>
 
-      {step === "first" && <Confetti />}
+      {showConfetti && <Confetti />}
     </div>
   );
 }
 
-/** Apelidos longos (até 20 caracteres) diminuem para caber numa linha só, sem quebrar. */
-function winnerFontSize(nickname: string): number {
-  return Math.min(96, Math.floor(1500 / Math.max([...nickname].length, 1)));
+/**
+ * Apelidos longos (até 20 caracteres) diminuem: no telão cabem numa linha só;
+ * no celular a coluna é estreita e o nome pode quebrar.
+ */
+function winnerFontSize(nickname: string, layout: PodiumLayout): number {
+  const length = Math.max([...nickname].length, 1);
+  return layout === "phone"
+    ? Math.min(30, Math.floor(360 / length))
+    : Math.min(96, Math.floor(1500 / length));
 }
 
 /** Tambor batendo e o "?" no lugar do vencedor. */
@@ -238,7 +306,7 @@ function mulberry32(seed: number) {
 }
 
 /** Chuva de confetes com as 4 formas do jogo, nas cores da marca. */
-function Confetti() {
+const Confetti = memo(function Confetti() {
   const pieces = useMemo(() => {
     const random = mulberry32(20261118);
     return Array.from({ length: CONFETTI_COUNT }, (_, i) => ({
@@ -278,4 +346,4 @@ function Confetti() {
       ))}
     </div>
   );
-}
+});
